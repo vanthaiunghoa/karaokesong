@@ -23,7 +23,7 @@
             android:paddingBottom="2dip"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/app_color"
+            android:background="@drawable/bg_top"
             android:orientation="horizontal">
 
             <LinearLayout

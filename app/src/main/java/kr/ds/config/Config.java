@@ -28,6 +28,11 @@ public class Config {
 	public static final String TOKEN = "token";
 	//gcmend
 
+	public static final String PREFERENCE_NEW = "2017-06-15-01";
+	public static final String YOUTUBE_AUTO_PLAY = "youtube_auto_play";
+	public static final String YOUTUBE_PLAY_END_RECORD_END = "youtube_play_end_record_end";
+	public static final String YOUTUBE_PLAY_RECORD = "youtube_play_record";
+
 
 	public final static String PREFERENCE_LOCATION =  "PREFERENCE_LOCATION";//위치동의
 	public final static String PREFERENCE_PREV_LAT =  "PREFERENCE_PREV_LAT";

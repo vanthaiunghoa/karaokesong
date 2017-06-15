@@ -11,7 +11,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="48dip"
-        android:background="@color/app_color"
+        android:background="@drawable/bg_top"
         android:orientation="horizontal">
 
 
@@ -21,7 +21,7 @@
             android:id="@+id/textView_top_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="동영상"
+            android:text="NEW"
             android:textColor="#ffffff"
             android:textSize="15sp"
             android:textStyle="bold" />
@@ -66,11 +66,8 @@
                 app:fabGravity="bottom_end"
                 app:fabMenu="@menu/menu_main"
                 app:miniFabBackgroundTint="@android:color/white"
-                app:miniFabDrawableTint="?attr/colorPrimaryDark"
-                app:miniFabTitleTextColor="@color/red" />
+                app:miniFabDrawableTint="@color/app_color"
+                app:miniFabTitleTextColor="#2e2830" />
         </FrameLayout>
-
-
-
     </android.support.v4.widget.SwipeRefreshLayout>
 </LinearLayout>

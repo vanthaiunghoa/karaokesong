@@ -30,6 +30,9 @@ public class SettingFragment extends BaseFragment implements OnClickListener{
 
 	private View mView;
 	private CheckBox mCheckBoxPush;
+	private CheckBox mCheckBoxPushAuto;
+	private CheckBox mCheckBoxPushRecord;
+	private CheckBox mCheckBoxPushEnd;
 	private ArrayList<VersionCheckHandler> DATA = new ArrayList<VersionCheckHandler>();
     
 	private Context mContext;
@@ -38,10 +41,11 @@ public class SettingFragment extends BaseFragment implements OnClickListener{
 	private String url = Config.URL+Config.URL_XML+Config.URL_SEND_CHECK;
 	private String updateurl = Config.URL+Config.URL_XML+Config.URL_SEND_UPDATE;
 	private TextView mTextViewVersion;
-	private SharedPreferences sharedPreferences;
 	private LinearLayout mLinearLayoutPush;
 	private LinearLayout mLinearLayoutArea;
 	private boolean isArea = false;
+
+
 
 	@Override
 	public void onAttach(Activity activity) {
@@ -58,10 +62,12 @@ public class SettingFragment extends BaseFragment implements OnClickListener{
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
-		sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
 		mView = inflater.inflate(R.layout.setting, container, false);
 		mLinearLayoutPush = (LinearLayout)mView.findViewById(R.id.linearLayout_push);
 		(mCheckBoxPush = (CheckBox)mView.findViewById(R.id.checkBox_push)).setOnClickListener(this);
+		(mCheckBoxPushRecord = (CheckBox)mView.findViewById(R.id.checkBox_youtube_play_record)).setOnClickListener(this);
+		(mCheckBoxPushAuto = (CheckBox)mView.findViewById(R.id.checkBox_youtube_auto_play)).setOnClickListener(this);
+		(mCheckBoxPushEnd = (CheckBox)mView.findViewById(R.id.checkBox_youtube_play_end_record_end)).setOnClickListener(this);
 		mTextViewVersion = (TextView)mView.findViewById(R.id.textView_version);
 		return mView;
 	}
@@ -73,8 +79,8 @@ public class SettingFragment extends BaseFragment implements OnClickListener{
 
 		if(!DsObjectUtils.getInstance(getActivity()).isEmpty(SharedPreference.getSharedPreference(getActivity(), Config.TOKEN))){
 			mLinearLayoutPush.setVisibility(View.VISIBLE);
-			regId = sharedPreferences.getString(Config.TOKEN , "");
-			androidId = sharedPreferences.getString(Config.ANDROID_ID , "");
+			regId = SharedPreference.getSharedPreference(mContext, Config.TOKEN);
+			androidId = SharedPreference.getSharedPreference(mContext, Config.ANDROID_ID);
 
 			Log.i("TEST",androidId+"");
 			if(!DsObjectUtils.getInstance(mContext).isEmpty(regId) && !DsObjectUtils.getInstance(mContext).isEmpty(androidId)) {
@@ -83,6 +89,25 @@ public class SettingFragment extends BaseFragment implements OnClickListener{
 		}else{
 			mLinearLayoutPush.setVisibility(View.GONE);
 		}
+
+		if(SharedPreference.getBooleanSharedPreference(mContext, Config.YOUTUBE_PLAY_RECORD)){
+			setBackgroundChecked(mCheckBoxPushRecord, true);
+		}else{
+			setBackgroundChecked(mCheckBoxPushRecord, false);
+		}
+
+		if(SharedPreference.getBooleanSharedPreference(mContext, Config.YOUTUBE_AUTO_PLAY)){
+			setBackgroundChecked(mCheckBoxPushAuto, true);
+		}else{
+			setBackgroundChecked(mCheckBoxPushAuto, false);
+		}
+
+		if(SharedPreference.getBooleanSharedPreference(mContext, Config.YOUTUBE_PLAY_END_RECORD_END)){
+			setBackgroundChecked(mCheckBoxPushEnd, true);
+		}else{
+			setBackgroundChecked(mCheckBoxPushEnd, false);
+		}
+
 	}
 	
 	private class regSendCheckTask extends AsyncTask<String, String, String> {
@@ -125,6 +150,33 @@ public class SettingFragment extends BaseFragment implements OnClickListener{
 				}else{
 					new regSendCheckTask().execute(androidId, regId, "N",updateurl);
 					setBackgroundChecked(mCheckBoxPush, false);
+				}
+				break;
+			case R.id.checkBox_youtube_play_record:
+				if(mCheckBoxPushRecord.isChecked() == true){
+					setBackgroundChecked(mCheckBoxPushRecord, true);
+					SharedPreference.putSharedPreference(mContext, Config.YOUTUBE_PLAY_RECORD, true);
+				}else{
+					setBackgroundChecked(mCheckBoxPushRecord, false);
+					SharedPreference.putSharedPreference(mContext, Config.YOUTUBE_PLAY_RECORD, false);
+				}
+				break;
+			case R.id.checkBox_youtube_auto_play:
+				if(mCheckBoxPushAuto.isChecked() == true){
+					setBackgroundChecked(mCheckBoxPushAuto, true);
+					SharedPreference.putSharedPreference(mContext, Config.YOUTUBE_AUTO_PLAY, true);
+				}else{
+					setBackgroundChecked(mCheckBoxPushAuto, false);
+					SharedPreference.putSharedPreference(mContext, Config.YOUTUBE_AUTO_PLAY, false);
+				}
+				break;
+			case R.id.checkBox_youtube_play_end_record_end:
+				if(mCheckBoxPushEnd.isChecked() == true){
+					setBackgroundChecked(mCheckBoxPushEnd, true);
+					SharedPreference.putSharedPreference(mContext, Config.YOUTUBE_PLAY_END_RECORD_END, true);
+				}else{
+					setBackgroundChecked(mCheckBoxPushEnd, true);
+					SharedPreference.putSharedPreference(mContext, Config.YOUTUBE_PLAY_END_RECORD_END, true);
 				}
 				break;
 			}

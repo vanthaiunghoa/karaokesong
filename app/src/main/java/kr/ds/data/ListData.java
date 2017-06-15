@@ -80,6 +80,8 @@ public class ListData extends BaseData {
                             mListHandler.setTitle(jsonObject1.getString("title"));
                             mListHandler.setVideo_id(jsonObject1.getString("video_id"));
                             mListHandler.setDate(jsonObject1.getString("date"));
+                            mListHandler.setHit(jsonObject1.getString("hit"));
+                            mListHandler.setLike(jsonObject1.getString("like"));
                         }
                     }
                 }

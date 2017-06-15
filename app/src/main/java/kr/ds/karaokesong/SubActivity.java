@@ -13,8 +13,10 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.view.animation.AlphaAnimation;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -48,6 +50,7 @@ import kr.ds.db.BookMarkDB;
 import kr.ds.db.RecordDB;
 import kr.ds.handler.ListHandler;
 import kr.ds.utils.DsObjectUtils;
+import kr.ds.utils.SharedPreference;
 import kr.ds.view.VisualizerView;
 import kr.ds.widget.ScrollListView;
 import omrecorder.AudioChunk;
@@ -117,8 +120,8 @@ public class SubActivity extends BaseActivity implements YouTubePlayer.OnInitial
 
     private VisualizerView mVisualizerView;
     private VisualizerView mVisualizerView2;
-    private TimerTask mTimerTask;
-    private Timer mTimer;
+    private TimerTask mTimerTask, mTimerTask2;
+    private Timer mTimer, mTimer2 = null;
     private YouTubePlayer mYouTubePlayer;
     private boolean isPlaying = false;
 
@@ -133,7 +136,7 @@ public class SubActivity extends BaseActivity implements YouTubePlayer.OnInitial
 
 
     private Recorder recorder;
-    private boolean isRecored = false;
+
 
     private LinearLayout mLinearLayoutShare;
     private LinearLayout mLinearLayoutBookMark;
@@ -146,11 +149,22 @@ public class SubActivity extends BaseActivity implements YouTubePlayer.OnInitial
     private RecordDB mRecordDB;
     private String mUrlFile = "";
     private TextView mTopName;
-    private TextView mTextViewTime;
-    private ImageButton mButton;
-    private ImageButton mButtonStop;
 
-    private Boolean isRecordStart = false;
+    private ImageButton mImageButtonRecord;
+    private ImageButton mImageButtonPause;
+    private ImageButton mImageButtonStop;
+
+    private boolean isRecored = false;
+    private Boolean isPause = false;
+
+
+    private static int RECORD = 0;
+    private static int PAUSE = 1;
+    private static int STOP = 2;
+
+    private TextView mTextViewTime;
+    private int time = 0;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -166,6 +180,9 @@ public class SubActivity extends BaseActivity implements YouTubePlayer.OnInitial
         setContentView(R.layout.activty_sub);
         mTopName = (TextView) findViewById(R.id.textView_top_name);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
+
+        mTextViewTime = (TextView)findViewById(R.id.textView_time);
+
         if (mToolbar != null) {
             if(!DsObjectUtils.getInstance(getApplicationContext()).isEmpty(mSavedata.getTitle())) {
                 mTopName.setText(mSavedata.getTitle());
@@ -181,59 +198,111 @@ public class SubActivity extends BaseActivity implements YouTubePlayer.OnInitial
         (mLinearLayoutBookMark = (LinearLayout) findViewById(R.id.linearLayout_bookmark)).setOnClickListener(this);
         (mLinearLayoutLike = (LinearLayout) findViewById(R.id.linearLayout_like)).setOnClickListener(this);
         mTextViewTime = (TextView)findViewById(R.id.textView_time);
-        (mButtonStop = (ImageButton) findViewById(R.id.button_stop)).setOnClickListener(new View.OnClickListener() {
+
+        (mImageButtonRecord = (ImageButton) findViewById(R.id.imagebutton_record)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(isRecordStart && recorder != null){
-                    try {
-                        mButton.setImageResource(R.drawable.play);
-                        Toast.makeText(getApplicationContext(), "녹음 정지 되었습니다.", Toast.LENGTH_SHORT).show();
-                        isRecordStart = false;
-                        isRecored = false;
-                        recorder.stopRecording();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        });
-        (mButton = (ImageButton) findViewById(R.id.button)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(!isRecordStart){
-                    mButton.setImageResource(R.drawable.resume);
-                    setupRecorder();//파일 새로 시작!!
-                    isRecordStart = true;
-                    isRecored = true;
-                    Calendar calendar = new GregorianCalendar(Locale.KOREA);
-                    SimpleDateFormat fm = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                    mRecordDB.open();
-                    mRecordDB.createNote(mSavedata.getDd_uid(), mSavedata.getImage(), mSavedata.getTitle(), mSavedata.getVideo_id(), mUrlFile, fm.format(calendar.getTime()));
-                    Toast.makeText(getApplicationContext(), "녹음 시작 되었습니다.", Toast.LENGTH_SHORT).show();
-                    mCursor.close();
-                    mRecordDB.close();
-                    recorder.startRecording();
-                }else {
-                    if (isRecordStart) {//처음에는 실행안되고 두번째 누를때 실행
+                if(!isRecored ) {
+                    if (!isPause){
+                        if(mTimer2 == null){
+                            mTimerTask2 = new TimerTask() {
+                                @Override
+                                public void run() {
+                                    Time();
+                                }
+                            };
+                            time = 0;
+                            mTimer2 = new Timer();
+                            mTimer2.schedule(mTimerTask2, 0, 1000);
+                        }
+                        isRecored = true;
+                        setAlpha(RECORD);
+                        setupRecorder();//파일 새로 시작!!
+                        Calendar calendar = new GregorianCalendar(Locale.KOREA);
+                        SimpleDateFormat fm = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                        mRecordDB.open();
+                        mRecordDB.createNote(mSavedata.getDd_uid(), mSavedata.getImage(), mSavedata.getTitle(), mSavedata.getVideo_id(), mUrlFile, fm.format(calendar.getTime()));
+                        Toast.makeText(getApplicationContext(), "녹음 시작 되었습니다.", Toast.LENGTH_SHORT).show();
+                        mCursor.close();
+                        mRecordDB.close();
                         if (recorder == null) {
                             return;
                         }
-                        if (isRecored) {//녹음중일때
-                            Toast.makeText(getApplicationContext(), "녹음 일시정지 되었습니다.", Toast.LENGTH_SHORT).show();
-                            mButton.setImageResource(R.drawable.play);
-                            isRecored = false;
-                            recorder.pauseRecording();
-                        } else {//다시시작일때
-                            Toast.makeText(getApplicationContext(), "녹음 다시시작 되었습니다.", Toast.LENGTH_SHORT).show();
-                            mButton.setImageResource(R.drawable.resume);
-                            isRecored = true;
-                            recorder.resumeRecording();
+                        recorder.startRecording();
+                    }else{
+                        if(mTimer2 == null){//화면다시 시작할경우
+                            mTimerTask2 = new TimerTask() {
+                                @Override
+                                public void run() {
+                                    Time();
+                                }
+                            };
+                            mTimer2 = new Timer();
+                            mTimer2.schedule(mTimerTask2, 0, 1000);
                         }
+                        isRecored = true;
+                        isPause = false;
+                        setAlpha(RECORD);
+                        Toast.makeText(getApplicationContext(), "녹음 다시시작 되었습니다.", Toast.LENGTH_SHORT).show();
+                        if (recorder == null) {
+                            return;
+                        }
+                        recorder.resumeRecording();
                     }
+                }else{
+                    Toast.makeText(getApplicationContext(), "녹음중 일때는 녹음 시작을 하실 수 없습니다.", Toast.LENGTH_SHORT).show();
                 }
             }
         });
 
+        (mImageButtonPause = (ImageButton) findViewById(R.id.imagebutton_pause)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if (isRecored) {//녹음중일때
+                    isRecored = false;
+                    isPause = true;
+                    setAlpha(PAUSE);
+                    Toast.makeText(getApplicationContext(), "녹음 일시정지 되었습니다.", Toast.LENGTH_SHORT).show();
+                    if (recorder == null) {
+                        return;
+                    }
+                    recorder.pauseRecording();
+                }else{
+                    Toast.makeText(getApplicationContext(), "녹음 중 일때 일시정지가 가능합니다.", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        (mImageButtonStop = (ImageButton) findViewById(R.id.imagebutton_stop)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isRecored || isPause) {
+                    try {
+                        if(mTimer2 != null){
+                            mTimer2.cancel();
+                            mTimer2 = null;
+                            mTimerTask2.cancel();
+                            mTimerTask2 = null;
+                            mTextViewTime.setText("00:00:00");
+                        }
+                        isRecored = false;
+                        isPause = false;
+                        setAlpha(STOP);
+                        Toast.makeText(getApplicationContext(), "녹음 중지 되었습니다.", Toast.LENGTH_SHORT).show();
+                        if(recorder == null) {
+                            return;
+                        }
+                        recorder.stopRecording();
+                        Log.i("TEST","stopRecording()");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }else{
+                    Toast.makeText(getApplicationContext(), "녹음중 또는 일시정지할때  중지가 가능합니다.", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
         mListView = (ScrollListView) findViewById(R.id.listView);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -276,17 +345,6 @@ public class SubActivity extends BaseActivity implements YouTubePlayer.OnInitial
                 }
             }
         });
-
-        mTimerTask = new TimerTask() {
-            @Override
-            public void run() {
-                Update();
-            }
-        };
-        mTimer = new Timer();
-        mTimer.schedule(mTimerTask, 0, 500);
-
-
         FragmentManager fm = getFragmentManager();
         String tag = YouTubePlayerFragment.class.getSimpleName();
         YouTubePlayerFragment playerFragment = (YouTubePlayerFragment) fm.findFragmentByTag(tag);
@@ -297,9 +355,6 @@ public class SubActivity extends BaseActivity implements YouTubePlayer.OnInitial
             ft.commit();
         }
         playerFragment.initialize(API_KEY, this);
-        if(!DsObjectUtils.isEmpty(mSavedata.getTitle())){
-            mTextViewTitle.setText(mSavedata.getTitle());
-        }
 
         new ListData().clear().setCallBack(new BaseResultListener() {
             @Override
@@ -325,6 +380,16 @@ public class SubActivity extends BaseActivity implements YouTubePlayer.OnInitial
             }
         }).setUrl(Config.URL+ Config.URL_XML+ Config.URL_RECOM).setParam("").getView();
 
+        setAlpha(STOP);
+        mTimerTask = new TimerTask() {
+            @Override
+            public void run() {
+                Update();
+            }
+        };
+        mTimer = new Timer();
+        mTimer.schedule(mTimerTask, 0, 500);
+
         mBookMarkDB.open();
         mCursor = mBookMarkDB.BookMarkConfirm(mSavedata.getDd_uid());
         if(mCursor.getCount() > 0){
@@ -335,6 +400,24 @@ public class SubActivity extends BaseActivity implements YouTubePlayer.OnInitial
         mCursor.close();
         mBookMarkDB.close();
 
+        if(!DsObjectUtils.isEmpty(mSavedata.getTitle())){
+            mTextViewTitle.setText(mSavedata.getTitle());
+        }
+    }
+    public void setAlpha(int type){
+        if(type == RECORD){
+            mImageButtonRecord.setAlpha(0.2f);
+            mImageButtonPause.setAlpha(1f);
+            mImageButtonStop.setAlpha(1f);
+        }else if(type == PAUSE){
+            mImageButtonRecord.setAlpha(1f);
+            mImageButtonPause.setAlpha(0.2f);
+            mImageButtonStop.setAlpha(1f);
+        }else if(type == STOP){
+            mImageButtonRecord.setAlpha(1f);
+            mImageButtonPause.setAlpha(0.2f);
+            mImageButtonStop.setAlpha(0.2f);
+        }
     }
 
     public void setLog(){
@@ -356,23 +439,48 @@ public class SubActivity extends BaseActivity implements YouTubePlayer.OnInitial
         }).setUrl(Config.URL+ Config.URL_XML+ Config.URL_LOG).setParam("?dd_uid="+mSavedata.getDd_uid()).getView();
     }
 
-    protected void Update() {
-        if(isVisualizerView && isVisualizerView2) {
-            if (isPlaying) {
-                mVisualizerView.receive(new Random().nextInt(100) + 1);
-                mVisualizerView2.receive(new Random().nextInt(100) + 1);
-            } else {
-                mVisualizerView.receive(0);
-                mVisualizerView2.receive(0);
-            }
+    protected void Time() {
+        if(isRecored) {
+            time++;
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    String si = (String.valueOf(time / 3600).length() == 1) ? ("0" + (time / 3600)) : String.valueOf(time / 3600);
+                    String minute = (String.valueOf(time % 3600 / 60).length() == 1) ? ("0" + (time % 3600 / 60)) : String.valueOf(time % 3600 / 60);
+                    String second = (String.valueOf(time % 3600 % 60).length() == 1) ? ("0" + (time % 3600 % 60)) : String.valueOf(time % 3600 % 60);
+
+                    mTextViewTime.setText(si + ":"+ minute + ":" + second);
+                }
+            });
         }
+    }
+
+    protected void Update() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if(isVisualizerView && isVisualizerView2) {
+                    if (isPlaying) {
+                        mVisualizerView.receive(new Random().nextInt(100) + 1);
+                        mVisualizerView2.receive(new Random().nextInt(100) + 1);
+                    } else {
+                        mVisualizerView.receive(0);
+                        mVisualizerView2.receive(0);
+                    }
+                }
+            }
+        });
     }
 
     @Override
     public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer youTubePlayer, boolean b) {
         mYouTubePlayer = youTubePlayer;
         if(!DsObjectUtils.isEmpty(mSavedata.getVideo_id())){
-            mYouTubePlayer.loadVideo(mSavedata.getVideo_id());
+            if(SharedPreference.getBooleanSharedPreference(getApplicationContext(), Config.YOUTUBE_AUTO_PLAY)){
+                mYouTubePlayer.loadVideo(mSavedata.getVideo_id());
+            }else{
+                mYouTubePlayer.cueVideo(mSavedata.getVideo_id());
+            }
         }
         mYouTubePlayer.setPlaybackEventListener(new YouTubePlayer.PlaybackEventListener() {
             @Override
@@ -385,9 +493,7 @@ public class SubActivity extends BaseActivity implements YouTubePlayer.OnInitial
             public void onPaused() {
                 Log.i("TEST","onStopped");
                 isPlaying = false;
-
             }
-
             @Override
             public void onStopped() {
                 Log.i("TEST","onStopped");
@@ -405,23 +511,85 @@ public class SubActivity extends BaseActivity implements YouTubePlayer.OnInitial
         mYouTubePlayer.setPlayerStateChangeListener(new YouTubePlayer.PlayerStateChangeListener() {
             @Override
             public void onLoading() {
+                Log.i("TEST", "onLoading");
             }
+
 
             @Override
             public void onLoaded(String s) {
+                Log.i("TEST", "onLoaded");
             }
 
             @Override
             public void onAdStarted() {
+                Log.i("TEST", "onAdStarted");
             }
 
             @Override
-            public void onVideoStarted() {
+            public void onVideoStarted() {//최초시작
+                if(SharedPreference.getBooleanSharedPreference(getApplicationContext(), Config.YOUTUBE_PLAY_RECORD)) {
+                    if(!isRecored ) {
+                        if (!isPause) {
+                            if (mTimer2 == null) {
+                                mTimerTask2 = new TimerTask() {
+                                    @Override
+                                    public void run() {
+                                        Time();
+                                    }
+                                };
+                                time = 0;
+                                mTimer2 = new Timer();
+                                mTimer2.schedule(mTimerTask2, 0, 1000);
+                            }
+                            isRecored = true;
+                            setAlpha(RECORD);
+                            setupRecorder();//파일 새로 시작!!
+                            Calendar calendar = new GregorianCalendar(Locale.KOREA);
+                            SimpleDateFormat fm = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                            mRecordDB.open();
+                            mRecordDB.createNote(mSavedata.getDd_uid(), mSavedata.getImage(), mSavedata.getTitle(), mSavedata.getVideo_id(), mUrlFile, fm.format(calendar.getTime()));
+                            Toast.makeText(getApplicationContext(), "녹음 시작 되었습니다.", Toast.LENGTH_SHORT).show();
+                            mCursor.close();
+                            mRecordDB.close();
+                            if (recorder == null) {
+                                return;
+                            }
+                            recorder.startRecording();
+                        }
+                    }
+                }
+                Log.i("TEST", "onVideoStarted");
             }
 
             @Override
             public void onVideoEnded() {
+                Log.i("TEST", "onVideoEnded");
+                if(SharedPreference.getBooleanSharedPreference(getApplicationContext(), Config.YOUTUBE_PLAY_END_RECORD_END)) {
+                    if (isRecored || isPause) {
+                        try {
+                            if(mTimer2 != null){
+                                mTimer2.cancel();
+                                mTimer2 = null;
+                                mTimerTask2.cancel();
+                                mTimerTask2 = null;
+                                mTextViewTime.setText("00:00:00");
+                            }
+                            isRecored = false;
+                            isPause = false;
+                            setAlpha(STOP);
+                            Toast.makeText(getApplicationContext(), "녹음 중지 되었습니다.", Toast.LENGTH_SHORT).show();
+                            if(recorder == null) {
+                                return;
+                            }
+                            recorder.stopRecording();
+                            Log.i("TEST","stopRecording()");
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
             }
+
             @Override
             public void onError(YouTubePlayer.ErrorReason errorReason) {
 
@@ -432,23 +600,7 @@ public class SubActivity extends BaseActivity implements YouTubePlayer.OnInitial
     @Override
     public void onInitializationFailure(YouTubePlayer.Provider provider, YouTubeInitializationResult youTubeInitializationResult) {
     }
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if(mTimer != null){
-            mTimer.cancel();
-            mTimer = null;
-        }
-        if(isRecored) {
-            if (recorder != null) {
-                try {
-                    recorder.stopRecording();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
+
     private void SendMMS() {
         if(!DsObjectUtils.isEmpty(mSavedata.getTitle()) && !DsObjectUtils.isEmpty(mSavedata.getDd_uid())) {
             try {
@@ -473,9 +625,6 @@ public class SubActivity extends BaseActivity implements YouTubePlayer.OnInitial
                 SendMMS();
                 break;
             case R.id.linearLayout_bookmark:
-
-
-
                 if(!DsObjectUtils.isEmpty(mSavedata.getDd_uid())) {
                     mBookMarkDB.open();
                     mCursor = mBookMarkDB.BookMarkConfirm(mSavedata.getDd_uid());
@@ -510,18 +659,71 @@ public class SubActivity extends BaseActivity implements YouTubePlayer.OnInitial
     }
 
     @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     protected void onPause() {
         super.onPause();
-        if (isRecordStart) {//처음에는 실행안되고 두번째 누를때 실행
+
+        if (isRecored) {//녹음중일때
+            if(mTimer2 != null){
+                mTimer2.cancel();
+                mTimer2 = null;
+                mTimerTask2.cancel();
+                mTimerTask2 = null;
+            }
+            isRecored = false;
+            isPause = true;
+            setAlpha(PAUSE);
+            Toast.makeText(getApplicationContext(), "녹음 일시정지 되었습니다.", Toast.LENGTH_SHORT).show();
             if (recorder == null) {
                 return;
             }
-            if (isRecored) {//녹음중일때
-                Toast.makeText(getApplicationContext(), "녹음 일시정지 되었습니다.", Toast.LENGTH_SHORT).show();
-                mButton.setImageResource(R.drawable.play);
+            recorder.pauseRecording();
+        }
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        if(mYouTubePlayer != null) {
+            mYouTubePlayer.release();
+        }
+        if(mTimer != null){
+            mTimer.cancel();
+            mTimer = null;
+            mTimerTask.cancel();
+            mTimerTask = null;
+        }
+        if (isRecored || isPause) {
+            try {
+                if(mTimer2 != null){
+                    mTimer2.cancel();
+                    mTimer2 = null;
+                    mTimerTask2.cancel();
+                    mTimerTask2 = null;
+                    mTextViewTime.setText("00:00:00");
+                }
                 isRecored = false;
-                recorder.pauseRecording();
+                isPause = false;
+                setAlpha(STOP);
+                Toast.makeText(getApplicationContext(), "녹음 중지 되었습니다.", Toast.LENGTH_SHORT).show();
+                if(recorder == null) {
+                    return;
+                }
+                recorder.stopRecording();
+                Log.i("TEST","stopRecording()");
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
     }
+
 }

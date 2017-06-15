@@ -55,7 +55,7 @@ public class VisualizerView extends FrameLayout {
     private void init(Context context, AttributeSet attrs) {
         TypedArray args = context.obtainStyledAttributes(attrs, R.styleable.visualizerView);
         mNumColumns = args.getInteger(R.styleable.visualizerView_numColumns, DEFAULT_NUM_COLUMNS);
-        mRenderColor = args.getColor(R.styleable.visualizerView_renderColor, 0xff1ea7f1);
+        mRenderColor = args.getColor(R.styleable.visualizerView_renderColor, 0xffa2afb6);
         mType = args.getInt(R.styleable.visualizerView_renderType, Type.BAR.getFlag());
         mRenderRange = args.getInteger(R.styleable.visualizerView_renderRange, RENDAR_RANGE_TOP);
         args.recycle();

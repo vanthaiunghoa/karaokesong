@@ -15,9 +15,10 @@ public class ListHandler  implements Parcelable{
     public String title;
     public String video_id;
     public String date;
+    public String hit;
+    public String like;
 
     public ListHandler(){
-
     }
 
     public String getDd_uid() {
@@ -60,14 +61,30 @@ public class ListHandler  implements Parcelable{
         this.date = date;
     }
 
+    public String getHit() {
+        return hit;
+    }
+
+    public void setHit(String hit) {
+        this.hit = hit;
+    }
+
+    public String getLike() {
+        return like;
+    }
+
+    public void setLike(String like) {
+        this.like = like;
+    }
+
     public ListHandler (Parcel src){
         this.dd_uid = src.readString();
         this.image = src.readString();
         this.title = src.readString();
         this.video_id = src.readString();
         this.date = src.readString();
-
-
+        this.hit = src.readString();
+        this.like = src.readString();
     }
     @Override
     public int describeContents() {
@@ -82,6 +99,9 @@ public class ListHandler  implements Parcelable{
         dest.writeString(this.title);
         dest.writeString(this.video_id);
         dest.writeString(this.date);
+        dest.writeString(this.hit);
+        dest.writeString(this.like);
+
     }
     public static final Creator CREATOR = new Creator() { //데이터 가져오기
 

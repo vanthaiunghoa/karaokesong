@@ -11,7 +11,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="48dip"
-        android:background="@color/app_color"
+        android:background="@drawable/bg_top"
         android:orientation="horizontal">
 
 
@@ -21,7 +21,7 @@
             android:id="@+id/textView_top_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="녹음"
+            android:text="내노래"
             android:textColor="#ffffff"
             android:textSize="15sp"
             android:textStyle="bold" />

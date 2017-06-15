@@ -56,7 +56,7 @@ public class RecordAdapter extends BaseAdapter {
         final ViewHolder holder;
         if (convertView == null) {
             holder = new ViewHolder();
-            convertView = mInflater.inflate(R.layout.fragment_list1_item1,null);
+            convertView = mInflater.inflate(R.layout.fragment_list1_item3,null);
             holder.imageView = (ImageView) convertView.findViewById(R.id.circularImageView);
             holder.textView1 = (TextView) convertView.findViewById(R.id.textView1);
             holder.textView2 = (TextView) convertView.findViewById(R.id.textView2);

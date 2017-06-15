@@ -23,11 +23,12 @@ public class KaraokeSongApplication extends MultiDexApplication {
 		if(DsObjectUtils.isEmpty(SharedPreference.getSharedPreference(getApplicationContext(), Config.ANDROID_ID))){
 			SharedPreference.putSharedPreference(getApplicationContext(), Config.ANDROID_ID, UniqueID.getUniqueID());
 		}
-		DisplayImageOptions defaultOptions = new DisplayImageOptions.Builder()
-				.delayBeforeLoading(100).cacheInMemory().cacheOnDisc().build();
-		ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(
-				getApplicationContext()).defaultDisplayImageOptions(
-				defaultOptions).build();
-		ImageLoader.getInstance().init(config);
+
+		if(DsObjectUtils.isEmpty(SharedPreference.getSharedPreference(getApplicationContext(), Config.PREFERENCE_NEW))){
+			SharedPreference.putSharedPreference(getApplicationContext(), Config.PREFERENCE_NEW, "ok");
+			SharedPreference.putSharedPreference(getApplicationContext(), Config.YOUTUBE_AUTO_PLAY, true);
+			SharedPreference.putSharedPreference(getApplicationContext(), Config.YOUTUBE_PLAY_END_RECORD_END, true);
+			SharedPreference.putSharedPreference(getApplicationContext(), Config.YOUTUBE_PLAY_RECORD, false);
+		}
 	}
 }

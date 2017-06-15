@@ -61,6 +61,7 @@ public class ListAdapter extends BaseAdapter {
             holder.imageView = (ImageView) convertView.findViewById(R.id.circularImageView);
             holder.textView1 = (TextView) convertView.findViewById(R.id.textView1);
             holder.textView2 = (TextView) convertView.findViewById(R.id.textView2);
+            holder.textView3 = (TextView) convertView.findViewById(R.id.textView3);
 
             convertView.setTag(holder);
         } else {
@@ -84,11 +85,18 @@ public class ListAdapter extends BaseAdapter {
             holder.textView1.setText("");
         }
 
-        if(!DsObjectUtils.isEmpty(mData.get(position).getDate())){
+        if(!DsObjectUtils.isEmpty(mData.get(position).getHit())){
             holder.textView2.setVisibility(View.VISIBLE);
-            holder.textView2.setText(mData.get(position).getDate());
+            holder.textView2.setText("조회수 "+mData.get(position).getHit());
         }else {
             holder.textView2.setText("");
+        }
+
+        if(!DsObjectUtils.isEmpty(mData.get(position).getDate())){
+            holder.textView3.setVisibility(View.VISIBLE);
+            holder.textView3.setText(mData.get(position).getDate());
+        }else {
+            holder.textView3.setText("");
         }
 
         return convertView;
@@ -97,7 +105,7 @@ public class ListAdapter extends BaseAdapter {
 
     class ViewHolder {
         ImageView imageView;
-        TextView textView1, textView2;
+        TextView textView1, textView2, textView3;
     }
 
 }

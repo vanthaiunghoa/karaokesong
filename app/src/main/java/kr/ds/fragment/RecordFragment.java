@@ -22,6 +22,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.nhaarman.listviewanimations.appearance.simple.AlphaInAnimationAdapter;
 
@@ -37,6 +38,8 @@ import kr.ds.adapter.RecordAdapter;
 import kr.ds.config.Config;
 import kr.ds.data.BaseResultListener;
 import kr.ds.data.RecordData;
+import kr.ds.db.BookMarkDB;
+import kr.ds.db.RecordDB;
 import kr.ds.handler.RecordHandler;
 import kr.ds.karaokesong.R;
 import kr.ds.karaokesong.SubActivity;
@@ -70,6 +73,7 @@ public class RecordFragment extends BaseFragment implements SwipeRefreshLayout.O
 
     private Button mButton;
     private MediaPlayer mMediaPlayer;
+    private RecordDB mRecordDB;
 
     @Override
     public void onAttach(Activity activity) {
@@ -94,6 +98,7 @@ public class RecordFragment extends BaseFragment implements SwipeRefreshLayout.O
                     if(mMediaPlayer != null) {
                         if (mMediaPlayer.isPlaying()) {
                             mMediaPlayer.stop();
+                            mMediaPlayer.reset();
                             mMediaPlayer.release();
                             mMediaPlayer = null;
                         }
@@ -115,6 +120,7 @@ public class RecordFragment extends BaseFragment implements SwipeRefreshLayout.O
                         public void onCompletion(MediaPlayer mp) {
                             if (mMediaPlayer != null) {
                                 mMediaPlayer.stop();
+                                mMediaPlayer.reset();
                                 mMediaPlayer.release();
                                 mMediaPlayer = null;
                             }
@@ -170,6 +176,23 @@ public class RecordFragment extends BaseFragment implements SwipeRefreshLayout.O
                     mIsTheLoding = true;
                     onLoadMore();
                 }
+            }
+        });
+        mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                try {
+                    mRecordDB = new RecordDB(mContext);
+                    mRecordDB.open();
+                    mRecordDB.deleteNote(mData.get(position).getContents_id());
+                    mData.remove(position);
+                    mRecordAdapter.notifyDataSetChanged();
+                    mRecordDB.close();
+                    Toast.makeText(mContext, "즐겨찾기 취소 되었습니다.", Toast.LENGTH_SHORT).show();
+                } catch (Exception e) {
+                    Toast.makeText(mContext, "오류가 발생 되었습니다. 계속 문제가 발생시 관리자에게 문의 해주시기 바랍니다.", Toast.LENGTH_SHORT).show();
+                }
+                return false;
             }
         });
     }
@@ -288,15 +311,18 @@ public class RecordFragment extends BaseFragment implements SwipeRefreshLayout.O
     }
 
     public void onLoadMore(){
-
         mProgressBar.setVisibility(View.VISIBLE);
         setListOnLoad();
     }
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-
-
-
+        Log.i("TEST", "onDestroyView()");
+        if (mMediaPlayer != null) {
+            mMediaPlayer.stop();
+            mMediaPlayer.reset();
+            mMediaPlayer.release();
+            mMediaPlayer = null;
+        }
     }
 }
