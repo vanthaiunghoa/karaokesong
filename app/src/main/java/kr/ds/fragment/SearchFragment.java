@@ -280,4 +280,9 @@ public class SearchFragment extends BaseFragment implements SwipeRefreshLayout.O
                 break;
         }
     }
+
+    @Override
+    public void Tab() {
+
+    }
 }

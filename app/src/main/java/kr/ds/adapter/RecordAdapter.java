@@ -5,14 +5,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import java.util.ArrayList;
 
+import kr.ds.data.BaseResultListener;
+import kr.ds.db.RecordDB;
 import kr.ds.handler.RecordHandler;
 import kr.ds.karaokesong.R;
 import kr.ds.utils.DsObjectUtils;
@@ -24,6 +29,8 @@ public class RecordAdapter extends BaseAdapter {
     private Context mContext;
     private ArrayList<RecordHandler> mData;
     private LayoutInflater mInflater;
+    private RecordDB mRecordDB;
+
 
     public RecordAdapter(Context context, ArrayList<RecordHandler> data) {
         mContext = context;
@@ -89,6 +96,11 @@ public class RecordAdapter extends BaseAdapter {
         }else {
             holder.textView2.setText("");
         }
+
+
+
+
+
 
         return convertView;
     }

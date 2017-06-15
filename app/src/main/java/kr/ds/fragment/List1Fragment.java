@@ -294,4 +294,9 @@ public class List1Fragment extends BaseFragment implements SwipeRefreshLayout.On
 
 
     }
+
+    @Override
+    public void Tab() {
+
+    }
 }

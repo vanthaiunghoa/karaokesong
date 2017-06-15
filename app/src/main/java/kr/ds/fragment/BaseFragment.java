@@ -44,5 +44,7 @@ public abstract class BaseFragment extends Fragment {
         return null;
     }
 
+    public abstract void Tab();
+
 
 }

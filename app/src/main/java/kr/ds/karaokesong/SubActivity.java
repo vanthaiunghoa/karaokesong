@@ -66,7 +66,7 @@ public class SubActivity extends BaseActivity implements YouTubePlayer.OnInitial
     private Toolbar mToolbar;
     private AudioSource mic() {
         return new AudioSource.Smart(MediaRecorder.AudioSource.MIC, AudioFormat.ENCODING_PCM_16BIT,
-                AudioFormat.CHANNEL_IN_MONO, 44100);
+                AudioFormat.CHANNEL_IN_MONO, 22050);
     }
     private File file(String filename) {
 
@@ -104,7 +104,7 @@ public class SubActivity extends BaseActivity implements YouTubePlayer.OnInitial
 
     private void setupRecorder() {
         Calendar calendar = new GregorianCalendar(Locale.KOREA);
-        SimpleDateFormat fm = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
+        SimpleDateFormat fm = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
         String strDate = fm.format(calendar.getTime());
 
         recorder = OmRecorder.wav(
@@ -222,7 +222,7 @@ public class SubActivity extends BaseActivity implements YouTubePlayer.OnInitial
                         SimpleDateFormat fm = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                         mRecordDB.open();
                         mRecordDB.createNote(mSavedata.getDd_uid(), mSavedata.getImage(), mSavedata.getTitle(), mSavedata.getVideo_id(), mUrlFile, fm.format(calendar.getTime()));
-                        Toast.makeText(getApplicationContext(), "녹음 시작 되었습니다.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "녹음이 시작 되었습니다.", Toast.LENGTH_SHORT).show();
                         mCursor.close();
                         mRecordDB.close();
                         if (recorder == null) {
@@ -243,14 +243,12 @@ public class SubActivity extends BaseActivity implements YouTubePlayer.OnInitial
                         isRecored = true;
                         isPause = false;
                         setAlpha(RECORD);
-                        Toast.makeText(getApplicationContext(), "녹음 다시시작 되었습니다.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "녹음이 다시시작 되었습니다.", Toast.LENGTH_SHORT).show();
                         if (recorder == null) {
                             return;
                         }
                         recorder.resumeRecording();
                     }
-                }else{
-                    Toast.makeText(getApplicationContext(), "녹음중 일때는 녹음 시작을 하실 수 없습니다.", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -268,8 +266,6 @@ public class SubActivity extends BaseActivity implements YouTubePlayer.OnInitial
                         return;
                     }
                     recorder.pauseRecording();
-                }else{
-                    Toast.makeText(getApplicationContext(), "녹음 중 일때 일시정지가 가능합니다.", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -289,7 +285,7 @@ public class SubActivity extends BaseActivity implements YouTubePlayer.OnInitial
                         isRecored = false;
                         isPause = false;
                         setAlpha(STOP);
-                        Toast.makeText(getApplicationContext(), "녹음 중지 되었습니다.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "녹음 정지 되었습니다.", Toast.LENGTH_SHORT).show();
                         if(recorder == null) {
                             return;
                         }
@@ -298,8 +294,6 @@ public class SubActivity extends BaseActivity implements YouTubePlayer.OnInitial
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                }else{
-                    Toast.makeText(getApplicationContext(), "녹음중 또는 일시정지할때  중지가 가능합니다.", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -607,7 +601,10 @@ public class SubActivity extends BaseActivity implements YouTubePlayer.OnInitial
                 Intent NextIntent = new Intent(Intent.ACTION_SEND);
                 NextIntent.setType("text/plain");
                 NextIntent.putExtra(Intent.EXTRA_SUBJECT, mSavedata.getTitle());
-                NextIntent.putExtra(Intent.EXTRA_TEXT, "반갑습니다.^^ 무료노래방 입니다.\n\n 어플다운:\n" + "https://play.google.com/store/apps/details?id=kr.ds.karaokesong");
+                NextIntent.putExtra(Intent.EXTRA_TEXT, "반갑습니다.^^ 무료노래방 입니다.\n\n " +
+                        "동영상:\n" + "https://www.youtube.com/watch?v="+mSavedata.getVideo_id() +
+                        "\n\n어플다운:\n" + "https://play.google.com/store/apps/details?id=kr.ds.karaokesong" +
+                "\n\n많은 다운 부탁드립니다.");
                 startActivity(Intent.createChooser(NextIntent, mSavedata.getTitle() + "공유하기"));
             } catch (Exception e) {
                 // TODO: handle exception

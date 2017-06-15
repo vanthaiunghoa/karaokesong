@@ -13,6 +13,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -26,7 +27,7 @@ import kr.ds.utils.VersionUtils;
 import kr.ds.utils.gcmHandler;
 
 
-public class SettingFragment extends BaseFragment implements OnClickListener{
+		public class SettingFragment extends BaseFragment implements OnClickListener{
 
 	private View mView;
 	private CheckBox mCheckBoxPush;
@@ -44,7 +45,7 @@ public class SettingFragment extends BaseFragment implements OnClickListener{
 	private LinearLayout mLinearLayoutPush;
 	private LinearLayout mLinearLayoutArea;
 	private boolean isArea = false;
-
+	private ScrollView mScrollView;
 
 
 	@Override
@@ -63,6 +64,7 @@ public class SettingFragment extends BaseFragment implements OnClickListener{
 			Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		mView = inflater.inflate(R.layout.setting, container, false);
+		mScrollView = (ScrollView)mView.findViewById(R.id.scrollView);
 		mLinearLayoutPush = (LinearLayout)mView.findViewById(R.id.linearLayout_push);
 		(mCheckBoxPush = (CheckBox)mView.findViewById(R.id.checkBox_push)).setOnClickListener(this);
 		(mCheckBoxPushRecord = (CheckBox)mView.findViewById(R.id.checkBox_youtube_play_record)).setOnClickListener(this);
@@ -109,7 +111,13 @@ public class SettingFragment extends BaseFragment implements OnClickListener{
 		}
 
 	}
-	
+
+	@Override
+	public void Tab() {
+		mScrollView.smoothScrollTo(0,0);
+
+	}
+
 	private class regSendCheckTask extends AsyncTask<String, String, String> {
 		@Override
 		protected void onPreExecute() {

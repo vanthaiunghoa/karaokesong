@@ -62,5 +62,66 @@
 
         </FrameLayout>
     </android.support.v4.widget.SwipeRefreshLayout>
+    <RelativeLayout
+        android:paddingTop="10dip"
+        android:paddingBottom="10dip"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/back">
+
+
+        <TextView
+            android:id="@+id/textView_title"
+            android:layout_marginLeft="15dip"
+            android:layout_centerVertical="true"
+            android:layout_toStartOf="@+id/textView_time"
+            android:layout_alignParentLeft="true"
+            android:textSize="12sp"
+            android:textColor="#2e2830"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="marquee"
+            android:focusable="true"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:singleLine="true"/>
+
+        <TextView
+            android:layout_toLeftOf="@+id/imagebutton_pause"
+            android:id="@+id/textView_time"
+            android:layout_marginLeft="15dip"
+            android:layout_marginRight="10dip"
+            android:layout_centerVertical="true"
+            android:textSize="12sp"
+            android:textColor="#c4c4c5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <ImageButton
+            android:alpha="0.2"
+            android:layout_toLeftOf="@+id/imagebutton_stop"
+            android:layout_marginRight="10dip"
+            android:id="@+id/imagebutton_pause"
+            android:background="@null"
+            android:layout_centerInParent="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/btn_pause"/>
+
+
+
+        <ImageButton
+            android:alpha="0.2"
+            android:layout_marginRight="20dip"
+            android:id="@+id/imagebutton_stop"
+            android:background="@null"
+            android:layout_alignParentRight="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/btn_stop"/>
+
+
+
+
+    </RelativeLayout>
     
 </LinearLayout>

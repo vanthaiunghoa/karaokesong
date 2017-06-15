@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">무료노래방</string>
+    <string name="app_name">무료 노래방</string>
     <string name="popupview_null">설치 후 가능 합니다.</string>
     <string name="finish_message">안녕하세요. 어플 이용해주셔서 감사합니다.\n\n리뷰와 별점을 주시면 항상 최선을 다해 노력하여 업데이트 하겠습니다.\n\n불편 하시더라도 광고 클릭으로 인하여 개발자는 많은 힘을 얻을 수 있습니다.\n\n감사합니다.</string>
     <string name="review">리뷰쓰기</string>
@@ -15,7 +15,4 @@
     <string name="location_success">확인</string>
     <string name="location_cancel">취소</string>
     <string name="car_location">길찾기 사용이 가능합니다.</string>
-    <string name="banner_ad_unit_id">ca-app-pub-3957553723261794/7410848065</string>
-
-
 </resources>

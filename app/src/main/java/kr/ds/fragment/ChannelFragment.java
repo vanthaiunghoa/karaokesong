@@ -286,4 +286,9 @@ public class ChannelFragment extends BaseFragment implements SwipeRefreshLayout.
 
 
     }
+
+    @Override
+    public void Tab() {
+
+    }
 }

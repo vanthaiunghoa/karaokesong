@@ -320,4 +320,9 @@ public class BookMarkFragment extends BaseFragment implements SwipeRefreshLayout
             }
         }
     }
+
+    @Override
+    public void Tab() {
+
+    }
 }

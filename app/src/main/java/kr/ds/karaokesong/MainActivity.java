@@ -138,6 +138,15 @@ public class MainActivity extends MainBaseActivity implements View.OnClickListen
         mFt = mFm.beginTransaction();
         setHideFragment(mFt);
 
+        if(mFragment6 != null){
+            mFragment6.Tab();
+        }
+        if(tab == 5){
+            if(mFragment5 !=  null) {
+                mFragment5.Tab();
+            }
+        }
+
         mImageViewTab1.setBackgroundResource(R.drawable.tab1_off);
         mImageViewTab2.setBackgroundResource(R.drawable.tab2_off);
         mImageViewTab3.setBackgroundResource(R.drawable.tab3_off);

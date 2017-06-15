@@ -20,10 +20,13 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.vision.text.Text;
 import com.nhaarman.listviewanimations.appearance.simple.AlphaInAnimationAdapter;
 
 import java.io.File;
@@ -43,6 +46,7 @@ import kr.ds.db.RecordDB;
 import kr.ds.handler.RecordHandler;
 import kr.ds.karaokesong.R;
 import kr.ds.karaokesong.SubActivity;
+import kr.ds.utils.DsObjectUtils;
 
 
 /**
@@ -75,6 +79,10 @@ public class RecordFragment extends BaseFragment implements SwipeRefreshLayout.O
     private MediaPlayer mMediaPlayer;
     private RecordDB mRecordDB;
 
+    private TextView mTextViewTitle, mTextViewTime;
+    private ImageButton mImageButtonPause;
+    private ImageButton mImageButtonStop;
+
     @Override
     public void onAttach(Activity activity) {
         // TODO Auto-generated method stub
@@ -84,25 +92,59 @@ public class RecordFragment extends BaseFragment implements SwipeRefreshLayout.O
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
-
         mView = inflater.inflate(R.layout.fragment_record_list, null);
+        mTextViewTime = (TextView) mView.findViewById(R.id.textView_time);
+        mTextViewTitle = (TextView) mView.findViewById(R.id.textView_title);
+        mTextViewTitle.setSelected(true);
+        (mImageButtonPause = (ImageButton)mView.findViewById(R.id.imagebutton_pause)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(mMediaPlayer != null) {
+                    if (mMediaPlayer.isPlaying()) {
+                        mMediaPlayer.pause();
+                        mImageButtonPause.setImageResource(R.drawable.btn_play);
+                    }else{
+                        mMediaPlayer.start();
+                        mImageButtonPause.setImageResource(R.drawable.btn_pause);
+                    }
+                }
+
+            }
+        });
+        (mImageButtonStop = (ImageButton)mView.findViewById(R.id.imagebutton_stop)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(mMediaPlayer != null) {
+                    mMediaPlayer.stop();
+                    mMediaPlayer.reset();
+                    mMediaPlayer.release();
+                    mMediaPlayer = null;
+                    setLayoutReset();
+                }
+
+            }
+        });
+
+
         mListView = (ListView)mView.findViewById(R.id.listView);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
                 // TODO Auto-generated method stub
-                Log.i("TEST", mData.get(position).getUrl_file()+"");
+
                 try {
-                    if(mMediaPlayer != null) {
-                        if (mMediaPlayer.isPlaying()) {
-                            mMediaPlayer.stop();
-                            mMediaPlayer.reset();
-                            mMediaPlayer.release();
-                            mMediaPlayer = null;
-                        }
+                    if(!DsObjectUtils.isEmpty(mData.get(position).getTitle())){
+                        mTextViewTitle.setText(mData.get(position).getTitle());
                     }
+                    if(mMediaPlayer != null) {
+                        mMediaPlayer.stop();
+                        mMediaPlayer.reset();
+                        mMediaPlayer.release();
+                        mMediaPlayer = null;
+                    }
+                    mImageButtonPause.setAlpha(1f);
+                    mImageButtonStop.setAlpha(1f);
                     mMediaPlayer = new MediaPlayer();
                     mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
                     FileInputStream fileInputStream = new FileInputStream(mData.get(position).getUrl_file());
@@ -123,6 +165,7 @@ public class RecordFragment extends BaseFragment implements SwipeRefreshLayout.O
                                 mMediaPlayer.reset();
                                 mMediaPlayer.release();
                                 mMediaPlayer = null;
+                                setLayoutReset();
                             }
                         }
                     });
@@ -140,7 +183,11 @@ public class RecordFragment extends BaseFragment implements SwipeRefreshLayout.O
         mSwipeLayout.setColorSchemeResources(R.color.colorPrimary);
         return mView;
     }
-
+    public void setLayoutReset(){
+        mTextViewTitle.setText("");
+        mImageButtonPause.setAlpha(0.2f);
+        mImageButtonStop.setAlpha(0.2f);
+    }
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         // TODO Auto-generated method stub
@@ -325,4 +372,26 @@ public class RecordFragment extends BaseFragment implements SwipeRefreshLayout.O
             mMediaPlayer = null;
         }
     }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (mMediaPlayer != null) {
+            if(mMediaPlayer.isPlaying()){
+                mMediaPlayer.pause();
+            }
+        }
+    }
+
+    @Override
+    public void Tab() {
+        if (mMediaPlayer != null) {
+            mMediaPlayer.stop();
+            mMediaPlayer.reset();
+            mMediaPlayer.release();
+            mMediaPlayer = null;
+            setLayoutReset();
+        }
+    }
+
 }

@@ -14,6 +14,7 @@ public class RecordHandler implements Parcelable{
     public String video_id;
     public String url_file;
     public String regdate;
+    public boolean play;
 
     public RecordHandler(){
 
@@ -67,6 +68,14 @@ public class RecordHandler implements Parcelable{
         this.regdate = regdate;
     }
 
+    public boolean isPlay() {
+        return play;
+    }
+
+    public void setPlay(boolean play) {
+        this.play = play;
+    }
+
     public RecordHandler(Parcel src){
         this.contents_id = src.readString();
         this.image = src.readString();
@@ -74,10 +83,6 @@ public class RecordHandler implements Parcelable{
         this.video_id = src.readString();
         this.url_file = src.readString();
         this.regdate = src.readString();
-
-
-
-
     }
     @Override
     public int describeContents() {

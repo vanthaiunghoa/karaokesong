@@ -66,7 +66,6 @@ public class ChannelListFragment extends BaseFragment implements SwipeRefreshLay
     private String mCcd_uid = "";
     private ChannelHandler mSavedata;
 
-    private TextView mTopName;
 
     @Override
     public void onAttach(Activity activity) {
@@ -80,7 +79,6 @@ public class ChannelListFragment extends BaseFragment implements SwipeRefreshLay
 
 
         mView = inflater.inflate(R.layout.fragment_channel_list, null);
-        mTopName = (TextView)mView.findViewById(R.id.textView_top_name);
         mFabSpeedDial = (FabSpeedDial) mView.findViewById(R.id.fab_speed_dial);
         mFabSpeedDial.setMenuListener(new SimpleMenuListenerAdapter() {
             @Override
@@ -143,9 +141,7 @@ public class ChannelListFragment extends BaseFragment implements SwipeRefreshLay
             mParam = "?list_type="+mList_type+"&ccd_uid="+mSavedata.getCcd_uid();
         }
 
-        if(!DsObjectUtils.isEmpty(mSavedata.getTitle()) && !DsObjectUtils.isEmpty(mSavedata.getTotal())){
-            mTopName.setText(mSavedata.getTitle()+"("+mSavedata.getTotal()+")");
-        }
+
 
         mProgressBar.setVisibility(View.VISIBLE);
         setList();
@@ -299,6 +295,11 @@ public class ChannelListFragment extends BaseFragment implements SwipeRefreshLay
         super.onDestroyView();
 
 
+
+    }
+
+    @Override
+    public void Tab() {
 
     }
 }

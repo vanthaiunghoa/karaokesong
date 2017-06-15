@@ -22,59 +22,6 @@ public class IntroActivity extends BaseActivity{
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_intro);
-/*
-        interstitialAd = new InterstitialAd(getApplicationContext());
-        interstitialAd.setAdUnitId("ca-app-pub-3957553723261794/2841047667");
-        AdRequest adRequest = new AdRequest.Builder().build();
-
-        interstitialAd.loadAd(adRequest);
-        interstitialAd.setAdListener(new AdListener() {
-            @Override
-            public void onAdClosed() {
-                // TODO Auto-generated method stub
-                super.onAdClosed();
-                OnNext();
-            }
-            @Override
-            public void onAdLoaded() {
-                // TODO Auto-generated method stub
-                super.onAdLoaded();
-
-            }
-            @Override
-            public void onAdFailedToLoad(int errorCode) {
-                // TODO Auto-generated method stub
-                super.onAdFailedToLoad(errorCode);
-                OnNext();
-            }
-        });
-
-        //10초 딜레이
-        mStartCountDownTimer = new CountDownTimer(7000, 1000) {
-            @Override
-            public void onTick(long millisUntilFinished) {
-                // TODO Auto-generated method stub
-                if(mCount > 1){
-                    if (interstitialAd.isLoaded()) {
-                        if(mStartCountDownTimer != null){
-                            mStartCountDownTimer.cancel();
-                        }
-                        interstitialCanceled = true;
-                        interstitialAd.show();
-                    }
-                }
-                mCount++;
-            }
-            @Override
-            public void onFinish() {
-                // TODO Auto-generated method stub
-                if(!interstitialCanceled) {
-                    OnNext();
-                }
-            }
-        };
-        mStartCountDownTimer.start();
-        */
         OnNext();
     }
 
