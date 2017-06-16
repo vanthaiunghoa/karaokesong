@@ -2,19 +2,26 @@ package kr.ds.karaokesong;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import com.facebook.ads.AbstractAdListener;
+import com.facebook.ads.Ad;
+import com.facebook.ads.AdError;
 import com.google.android.gms.ads.formats.NativeAd;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+
+import java.util.Random;
 
 import kr.ds.config.Config;
 import kr.ds.fragment.BaseFragment;
@@ -58,6 +65,8 @@ public class MainActivity extends MainBaseActivity implements View.OnClickListen
     private final int TAB5 = 5;
     private final int TAB6 = 6;
 
+    private com.facebook.ads.InterstitialAd interstitialAdFackBook;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -85,6 +94,56 @@ public class MainActivity extends MainBaseActivity implements View.OnClickListen
             Intent intent = new Intent(getApplicationContext(), RegistrationIntentService.class);
             startService(intent);
         }
+
+        if(isFaceBookCheck()){
+            setFaceBook();
+        }
+    }
+
+    private void setFaceBook() {
+
+        interstitialAdFackBook = new com.facebook.ads.InterstitialAd(getApplicationContext(), "1728884537412489_1728884787412464");
+        interstitialAdFackBook.setAdListener(new AbstractAdListener() {
+            @Override
+            public void onError(Ad ad, AdError adError) {
+                super.onError(ad, adError);
+                Log.i("TEST","error");
+                Log.i("TEST",adError.toString());
+
+            }
+            @Override
+            public void onAdLoaded(Ad ad) {
+                super.onAdLoaded(ad);
+                int random = new Random().nextInt(3);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        interstitialAdFackBook.show();
+                    }
+                }, random*1000);
+            }
+
+            @Override
+            public void onAdClicked(Ad ad) {
+                super.onAdClicked(ad);
+            }
+
+            @Override
+            public void onInterstitialDisplayed(Ad ad) {
+                super.onInterstitialDisplayed(ad);
+            }
+
+            @Override
+            public void onInterstitialDismissed(Ad ad) {
+                super.onInterstitialDismissed(ad);
+            }
+
+            @Override
+            public void onLoggingImpression(Ad ad) {
+                super.onLoggingImpression(ad);
+            }
+        });
+        interstitialAdFackBook.loadAd();
     }
 
 
