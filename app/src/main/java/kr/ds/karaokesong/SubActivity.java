@@ -66,7 +66,7 @@ public class SubActivity extends BaseActivity implements YouTubePlayer.OnInitial
     private Toolbar mToolbar;
     private AudioSource mic() {
         return new AudioSource.Smart(MediaRecorder.AudioSource.MIC, AudioFormat.ENCODING_PCM_16BIT,
-                AudioFormat.CHANNEL_IN_MONO, 22050);
+                AudioFormat.CHANNEL_IN_MONO, 44100);
     }
     private File file(String filename) {
 
@@ -105,8 +105,8 @@ public class SubActivity extends BaseActivity implements YouTubePlayer.OnInitial
     private void setupRecorder() {
         Calendar calendar = new GregorianCalendar(Locale.KOREA);
         SimpleDateFormat fm = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
-        String strDate = fm.format(calendar.getTime());
-
+        String strDate = mSavedata.getTitle().trim()+"_"+fm.format(calendar.getTime());
+        strDate = strDate.replace("/","");
         recorder = OmRecorder.wav(
                 new PullTransport.Default(mic(), new PullTransport.OnAudioChunkPulledListener() {
                     @Override public void onAudioChunkPulled(AudioChunk audioChunk) {
@@ -285,7 +285,7 @@ public class SubActivity extends BaseActivity implements YouTubePlayer.OnInitial
                         isRecored = false;
                         isPause = false;
                         setAlpha(STOP);
-                        Toast.makeText(getApplicationContext(), "녹음 정지 되었습니다.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "녹음 정지 되었습니다. 내 노래에서 녹음된 곡을 확인 해주세요.^^", Toast.LENGTH_SHORT).show();
                         if(recorder == null) {
                             return;
                         }

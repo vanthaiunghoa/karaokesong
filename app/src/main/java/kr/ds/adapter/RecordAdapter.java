@@ -1,6 +1,8 @@
 package kr.ds.adapter;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +16,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import kr.ds.data.BaseResultListener;
@@ -67,6 +70,7 @@ public class RecordAdapter extends BaseAdapter {
             holder.imageView = (ImageView) convertView.findViewById(R.id.circularImageView);
             holder.textView1 = (TextView) convertView.findViewById(R.id.textView1);
             holder.textView2 = (TextView) convertView.findViewById(R.id.textView2);
+            holder.imageViewShare =  (ImageView) convertView.findViewById(R.id.imageView_share);
 
             convertView.setTag(holder);
         } else {
@@ -96,6 +100,22 @@ public class RecordAdapter extends BaseAdapter {
         }else {
             holder.textView2.setText("");
         }
+        holder.imageViewShare.setTag(position);
+        holder.imageViewShare.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                File audioFile = new File(mData.get(position).getUrl_file());
+                if (audioFile.exists() == false){ return; }
+                int position = (int) v.getTag();
+                Intent intent = new Intent();
+                intent.setAction(Intent.ACTION_SEND);
+
+                intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(audioFile));
+                intent.setType("audio/*");
+                mContext.startActivity(Intent.createChooser(intent, "녹음 파일 공유하기"));
+
+            }
+        });
 
 
 
@@ -107,7 +127,7 @@ public class RecordAdapter extends BaseAdapter {
 
 
     class ViewHolder {
-        ImageView imageView;
+        ImageView imageView, imageViewShare;
         TextView textView1, textView2;
     }
 

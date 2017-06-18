@@ -235,7 +235,7 @@ public class RecordFragment extends BaseFragment implements SwipeRefreshLayout.O
                     mData.remove(position);
                     mRecordAdapter.notifyDataSetChanged();
                     mRecordDB.close();
-                    Toast.makeText(mContext, "즐겨찾기 취소 되었습니다.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mContext, "내노래 삭제 되었습니다.", Toast.LENGTH_SHORT).show();
                 } catch (Exception e) {
                     Toast.makeText(mContext, "오류가 발생 되었습니다. 계속 문제가 발생시 관리자에게 문의 해주시기 바랍니다.", Toast.LENGTH_SHORT).show();
                 }
