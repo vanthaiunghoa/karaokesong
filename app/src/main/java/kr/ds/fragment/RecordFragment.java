@@ -83,6 +83,8 @@ public class RecordFragment extends BaseFragment implements SwipeRefreshLayout.O
     private ImageButton mImageButtonPause;
     private ImageButton mImageButtonStop;
 
+    private TextView mTextViewTopName;
+
     @Override
     public void onAttach(Activity activity) {
         // TODO Auto-generated method stub
@@ -93,6 +95,8 @@ public class RecordFragment extends BaseFragment implements SwipeRefreshLayout.O
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.fragment_record_list, null);
+
+        mTextViewTopName = (TextView)mView.findViewById(R.id.textView_top_name);
         mTextViewTime = (TextView) mView.findViewById(R.id.textView_time);
         mTextViewTitle = (TextView) mView.findViewById(R.id.textView_title);
         mTextViewTitle.setSelected(true);
@@ -212,10 +216,11 @@ public class RecordFragment extends BaseFragment implements SwipeRefreshLayout.O
             public void onScroll(AbsListView view, int firstVisibleItem,
                                  int visibleItemCount, int totalItemCount) {
                 // TODO Auto-generated method stub
+
                 int topRowVerticalPosition = (mListView == null || mListView.getChildCount() == 0) ? 0 : mListView.getChildAt(0).getTop();
-                if(mData != null ){
-                    mSwipeLayout.setEnabled(firstVisibleItem == 0 && topRowVerticalPosition >= 0);
-                }else{
+                if (firstVisibleItem == 0 && topRowVerticalPosition >= 0) {
+                    mSwipeLayout.setEnabled(true);
+                } else {
                     mSwipeLayout.setEnabled(false);
                 }
                 boolean loadMore = firstVisibleItem + visibleItemCount >= totalItemCount;
@@ -225,23 +230,23 @@ public class RecordFragment extends BaseFragment implements SwipeRefreshLayout.O
                 }
             }
         });
-        mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                try {
-                    mRecordDB = new RecordDB(mContext);
-                    mRecordDB.open();
-                    mRecordDB.deleteNote(mData.get(position).getContents_id());
-                    mData.remove(position);
-                    mRecordAdapter.notifyDataSetChanged();
-                    mRecordDB.close();
-                    Toast.makeText(mContext, "내노래 삭제 되었습니다.", Toast.LENGTH_SHORT).show();
-                } catch (Exception e) {
-                    Toast.makeText(mContext, "오류가 발생 되었습니다. 계속 문제가 발생시 관리자에게 문의 해주시기 바랍니다.", Toast.LENGTH_SHORT).show();
-                }
-                return false;
-            }
-        });
+//        mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+//            @Override
+//            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+//                try {
+//                    mRecordDB = new RecordDB(mContext);
+//                    mRecordDB.open();
+//                    mRecordDB.deleteNote(mData.get(position).getContents_id());
+//                    mData.remove(position);
+//                    mRecordAdapter.notifyDataSetChanged();
+//                    mRecordDB.close();
+//                    Toast.makeText(mContext, "내노래 삭제 되었습니다.", Toast.LENGTH_SHORT).show();
+//                } catch (Exception e) {
+//                    Toast.makeText(mContext, "오류가 발생 되었습니다. 계속 문제가 발생시 관리자에게 문의 해주시기 바랍니다.", Toast.LENGTH_SHORT).show();
+//                }
+//                return false;
+//            }
+//        });
     }
 
     public void setList(){
@@ -259,6 +264,7 @@ public class RecordFragment extends BaseFragment implements SwipeRefreshLayout.O
                     mPage = 1;
 
                     mMainData = (ArrayList<RecordHandler>) data;
+                    getTitle(String.valueOf(mMainData.size()));
                     if(mMainData.size() - ((mPage-1)*mNumber) > 0){
                         if(mMainData.size() >= mPage * mNumber){
                             startPage = (mPage-1) * mNumber;
@@ -277,6 +283,7 @@ public class RecordFragment extends BaseFragment implements SwipeRefreshLayout.O
                         mListView.setAdapter(mAlphaInAnimationAdapter);
                     }
                 }else{
+                    getTitle("0");
                     mListView.setAdapter(null);
                 }
             }
@@ -302,6 +309,7 @@ public class RecordFragment extends BaseFragment implements SwipeRefreshLayout.O
                     mPage = 1;
 
                     mMainData = (ArrayList<RecordHandler>) data;
+                    getTitle(String.valueOf(mMainData.size()));
                     if(mMainData.size() - ((mPage-1)*mNumber) > 0){
                         if(mMainData.size() >= mPage * mNumber){
                             startPage = (mPage-1) * mNumber;
@@ -320,6 +328,7 @@ public class RecordFragment extends BaseFragment implements SwipeRefreshLayout.O
                         mListView.setAdapter(mAlphaInAnimationAdapter);
                     }
                 }else{
+                    getTitle("0");
                     mListView.setAdapter(null);
                 }
             }
@@ -360,6 +369,9 @@ public class RecordFragment extends BaseFragment implements SwipeRefreshLayout.O
     public void onLoadMore(){
         mProgressBar.setVisibility(View.VISIBLE);
         setListOnLoad();
+    }
+    public void getTitle(String count){
+        mTextViewTopName.setText("내노래"+"("+count+")");
     }
     @Override
     public void onDestroyView() {

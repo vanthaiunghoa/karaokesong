@@ -71,6 +71,7 @@ public class RecordAdapter extends BaseAdapter {
             holder.textView1 = (TextView) convertView.findViewById(R.id.textView1);
             holder.textView2 = (TextView) convertView.findViewById(R.id.textView2);
             holder.imageViewShare =  (ImageView) convertView.findViewById(R.id.imageView_share);
+            holder.imageViewDelete =  (ImageView) convertView.findViewById(R.id.imageView_delete);
 
             convertView.setTag(holder);
         } else {
@@ -117,6 +118,28 @@ public class RecordAdapter extends BaseAdapter {
             }
         });
 
+        holder.imageViewDelete.setTag(position);
+        holder.imageViewDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int position = (int) v.getTag();
+
+                try {
+                    mRecordDB = new RecordDB(mContext);
+                    mRecordDB.open();
+                    mRecordDB.deleteNote(mData.get(position).getContents_id());
+                    mData.remove(position);
+                    notifyDataSetChanged();
+                    mRecordDB.close();
+                    Toast.makeText(mContext, "내노래 삭제 되었습니다.", Toast.LENGTH_SHORT).show();
+                } catch (Exception e) {
+                    Toast.makeText(mContext, "오류가 발생 되었습니다. 계속 문제가 발생시 관리자에게 문의 해주시기 바랍니다.", Toast.LENGTH_SHORT).show();
+                }
+
+
+            }
+        });
+
 
 
 
@@ -127,7 +150,7 @@ public class RecordAdapter extends BaseAdapter {
 
 
     class ViewHolder {
-        ImageView imageView, imageViewShare;
+        ImageView imageView, imageViewShare, imageViewDelete;
         TextView textView1, textView2;
     }
 

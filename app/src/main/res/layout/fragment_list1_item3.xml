@@ -39,6 +39,16 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@drawable/list_play"/>
+
+                <ImageView
+                    android:clickable="true"
+                    android:padding="10dip"
+                    android:layout_margin="5dip"
+                    android:id="@+id/imageView_delete"
+                    android:layout_gravity="right"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/list_delete"/>
             </FrameLayout>
 
             <LinearLayout
@@ -78,6 +88,7 @@
                 </LinearLayout>
 
                     <ImageView
+
                         android:clickable="true"
                         android:id="@+id/imageView_share"
                         android:layout_gravity="right"

@@ -137,9 +137,9 @@ public class BookMarkFragment extends BaseFragment implements SwipeRefreshLayout
                                  int visibleItemCount, int totalItemCount) {
                 // TODO Auto-generated method stub
                 int topRowVerticalPosition = (mListView == null || mListView.getChildCount() == 0) ? 0 : mListView.getChildAt(0).getTop();
-                if(mData != null ){
-                    mSwipeLayout.setEnabled(firstVisibleItem == 0 && topRowVerticalPosition >= 0);
-                }else{
+                if (firstVisibleItem == 0 && topRowVerticalPosition >= 0) {
+                    mSwipeLayout.setEnabled(true);
+                } else {
                     mSwipeLayout.setEnabled(false);
                 }
                 boolean loadMore = firstVisibleItem + visibleItemCount >= totalItemCount;
@@ -184,6 +184,7 @@ public class BookMarkFragment extends BaseFragment implements SwipeRefreshLayout
                         mListView.setAdapter(mAlphaInAnimationAdapter);
                     }
                 }else{
+                    getTitle("0");
                     mListView.setAdapter(null);
                 }
             }
@@ -244,6 +245,7 @@ public class BookMarkFragment extends BaseFragment implements SwipeRefreshLayout
                         mListView.setAdapter(mAlphaInAnimationAdapter);
                     }
                 }else{
+                    getTitle("0");
                     mListView.setAdapter(null);
                 }
             }

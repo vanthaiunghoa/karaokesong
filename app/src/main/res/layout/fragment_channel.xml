@@ -66,8 +66,8 @@
                 app:fabGravity="bottom_end"
                 app:fabMenu="@menu/menu_main"
                 app:miniFabBackgroundTint="@android:color/white"
-                app:miniFabDrawableTint="?attr/colorPrimaryDark"
-                app:miniFabTitleTextColor="@color/red" />
+                app:miniFabDrawableTint="@color/app_color"
+                app:miniFabTitleTextColor="#2e2830" />
         </FrameLayout>
 
 
