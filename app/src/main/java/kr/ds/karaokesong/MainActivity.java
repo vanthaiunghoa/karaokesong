@@ -95,9 +95,9 @@ public class MainActivity extends MainBaseActivity implements View.OnClickListen
             startService(intent);
         }
 
-        if(isFaceBookCheck()){
-            setFaceBook();
-        }
+//        if(isFaceBookCheck()){
+//            setFaceBook();
+//        }
     }
 
     private void setFaceBook() {

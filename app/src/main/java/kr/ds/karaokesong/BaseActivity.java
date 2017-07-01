@@ -1,5 +1,6 @@
 package kr.ds.karaokesong;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -13,6 +14,16 @@ public class BaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         overridePendingTransition(0, 0);
     }
+
+    public boolean isFaceBookCheck() {
+        Intent startLink = getPackageManager().getLaunchIntentForPackage("com.facebook.katana");
+        if(startLink != null){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
     @Override
     public void finish() {
         super.finish();
