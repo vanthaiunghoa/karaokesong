@@ -13,7 +13,7 @@ public class Config {
 	public static String URL_CHANNEL = "channel.php";
 	public static String URL_RECOM = "recom.php";
 	public static String URL_LOG = "log.php";
-
+	public static String URL_DOWN = "/link/down.php";
 
 
 	public static String URL_GCM = "gcm/gcm.php";

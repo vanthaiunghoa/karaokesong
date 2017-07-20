@@ -50,13 +50,26 @@ public class MyGcmListenerService extends GcmListenerService {
         String message = data.getString("msg");
         String image_url = data.getString("image_url");
         String push_type = data.getString("push_type");
-
-        if(!DsObjectUtils.getInstance(this).isEmpty(image_url)){
-            Bitmap bitmap = Helper.tryToGetBitmapFromInternet(image_url, this, -1);
-            sendNotification(message,  bitmap);
+        if (!DsObjectUtils.getInstance(this).isEmpty(push_type)) {
+            if(push_type.matches("down")){
+                sendDownNotification(message);
+            }else{
+                if (!DsObjectUtils.getInstance(this).isEmpty(image_url)) {
+                    Bitmap bitmap = Helper.tryToGetBitmapFromInternet(image_url, this, -1);
+                    sendNotification(message, bitmap);
+                } else {
+                    sendNotification(message);
+                }
+            }
         }else{
-            sendNotification(message);
+            if(!DsObjectUtils.getInstance(this).isEmpty(image_url)){
+                Bitmap bitmap = Helper.tryToGetBitmapFromInternet(image_url, this, -1);
+                sendNotification(message,  bitmap);
+            }else{
+                sendNotification(message);
+            }
         }
+
 
 
         Intent newintent = new Intent(Config.GCM_INTENT_FILLTER);
@@ -94,6 +107,14 @@ public class MyGcmListenerService extends GcmListenerService {
      *
      * @param message GCM message received.
      */
+    private void sendDownNotification(String message) {
+        Intent i = new Intent(getApplicationContext(), DownActivity.class);
+        Bundle b = new Bundle();
+        b.putString("text", message);
+        i.putExtras(b);
+        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(i);
+    }
     private void sendNotification(String message) {
         Intent intent = new Intent(this, IntroActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

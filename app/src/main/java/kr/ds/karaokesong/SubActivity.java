@@ -25,6 +25,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.ads.AbstractAdListener;
+import com.facebook.ads.Ad;
+import com.facebook.ads.AdError;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerFragment;
@@ -115,6 +118,52 @@ public class SubActivity extends BaseActivity implements YouTubePlayer.OnInitial
                 }), file(strDate));
     }
 
+    private void setFaceBook() {
+
+        interstitialAdFackBook = new com.facebook.ads.InterstitialAd(getApplicationContext(), "1728884537412489_1728884787412464");
+        interstitialAdFackBook.setAdListener(new AbstractAdListener() {
+            @Override
+            public void onError(Ad ad, AdError adError) {
+                super.onError(ad, adError);
+                Log.i("TEST","error");
+                Log.i("TEST",adError.toString());
+
+            }
+            @Override
+            public void onAdLoaded(Ad ad) {
+                super.onAdLoaded(ad);
+                int random = new Random().nextInt(3);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        interstitialAdFackBook.show();
+                    }
+                }, random*1000);
+            }
+
+            @Override
+            public void onAdClicked(Ad ad) {
+                super.onAdClicked(ad);
+            }
+
+            @Override
+            public void onInterstitialDisplayed(Ad ad) {
+                super.onInterstitialDisplayed(ad);
+            }
+
+            @Override
+            public void onInterstitialDismissed(Ad ad) {
+                super.onInterstitialDismissed(ad);
+            }
+
+            @Override
+            public void onLoggingImpression(Ad ad) {
+                super.onLoggingImpression(ad);
+            }
+        });
+        interstitialAdFackBook.loadAd();
+    }
+
     private ListHandler mSavedata;
     public static final String API_KEY = "AIzaSyAkfPX3uF_hALFjYOUhwlhewgaqewl08XE";
 
@@ -164,11 +213,24 @@ public class SubActivity extends BaseActivity implements YouTubePlayer.OnInitial
 
     private TextView mTextViewTime;
     private int time = 0;
+    private boolean isAdCheck = false; //광고 여부
+    private com.facebook.ads.InterstitialAd interstitialAdFackBook;
 
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //3번
+        int adCount = SharedPreference.getIntSharedPreference(getApplicationContext(), "ad_count");
+        adCount++;
+        SharedPreference.putSharedPreference(getApplicationContext(),"ad_count",adCount);
+        if(adCount>=3){
+            isAdCheck = true;
+            SharedPreference.putSharedPreference(getApplicationContext(), "ad_count", 0);
+            setFaceBook();
+        }
+
         mBookMarkDB = new BookMarkDB(getApplicationContext());
         mRecordDB = new RecordDB(getApplicationContext());
         if(savedInstanceState != null){
@@ -470,10 +532,14 @@ public class SubActivity extends BaseActivity implements YouTubePlayer.OnInitial
     public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer youTubePlayer, boolean b) {
         mYouTubePlayer = youTubePlayer;
         if(!DsObjectUtils.isEmpty(mSavedata.getVideo_id())){
-            if(SharedPreference.getBooleanSharedPreference(getApplicationContext(), Config.YOUTUBE_AUTO_PLAY)){
-                mYouTubePlayer.loadVideo(mSavedata.getVideo_id());
-            }else{
+            if(isAdCheck){
                 mYouTubePlayer.cueVideo(mSavedata.getVideo_id());
+            }else {
+                if (SharedPreference.getBooleanSharedPreference(getApplicationContext(), Config.YOUTUBE_AUTO_PLAY)) {
+                    mYouTubePlayer.loadVideo(mSavedata.getVideo_id());
+                } else {
+                    mYouTubePlayer.cueVideo(mSavedata.getVideo_id());
+                }
             }
         }
         mYouTubePlayer.setPlaybackEventListener(new YouTubePlayer.PlaybackEventListener() {

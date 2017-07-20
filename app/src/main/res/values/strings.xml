@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">무료 노래방</string>
     <string name="popupview_null">설치 후 가능 합니다.</string>
-    <string name="finish_message">안녕하세요. 어플 이용해주셔서 감사합니다.\n\n리뷰와 별점을 주시면 항상 최선을 다해 노력하여 업데이트 하겠습니다.\n\n불편 하시더라도 광고 클릭으로 인하여 개발자는 많은 힘을 얻을 수 있습니다.\n\n감사합니다.</string>
+    <string name="finish_message">안녕하세요. 어플 이용해주셔서 감사합니다.\n\n항상 최선을 다해 노력하여 업데이트 하겠습니다.\n\n리뷰와 별점을 주시면 개발자는 많은 힘을 얻을 수 있습니다.\n\n감사합니다.</string>
     <string name="review">리뷰쓰기</string>
     <string name="cancel">취소</string>
     <string name="finish">종료</string>
