@@ -28,6 +28,7 @@ import kr.ds.fragment.BaseFragment;
 import kr.ds.fragment.BookMarkFragment;
 import kr.ds.fragment.ChannelFragment;
 import kr.ds.fragment.List1Fragment;
+import kr.ds.fragment.MainFragment;
 import kr.ds.fragment.RecordFragment;
 import kr.ds.fragment.SearchFragment;
 import kr.ds.fragment.SettingFragment;
@@ -216,7 +217,7 @@ public class MainActivity extends MainBaseActivity implements View.OnClickListen
         if(tab == TAB1){
             mImageViewTab1.setBackgroundResource(R.drawable.tab1_on);
             if (mFragment1 == null) {
-                mFragment1 = BaseFragment.newInstance(List1Fragment.class);
+                mFragment1 = BaseFragment.newInstance(MainFragment.class);
                 mFt.add(R.id.content_frame, mFragment1);
             } else {
                 mFt.show(mFragment1);

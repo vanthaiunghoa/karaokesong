@@ -22,7 +22,11 @@ public class IntroActivity extends BaseActivity{
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_intro);
+        //OnNext();
+        setAdMob();
 
+    }
+    public void setAdMob(){
         interstitialAd = new InterstitialAd(getApplicationContext());
         interstitialAd.setAdUnitId("ca-app-pub-3957553723261794/7959756869");
         AdRequest adRequest = new AdRequest.Builder().build();

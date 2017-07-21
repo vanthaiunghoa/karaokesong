@@ -132,7 +132,7 @@ public class SubActivity extends BaseActivity implements YouTubePlayer.OnInitial
             @Override
             public void onAdLoaded(Ad ad) {
                 super.onAdLoaded(ad);
-                int random = new Random().nextInt(3);
+                int random = new Random().nextInt(1);
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {

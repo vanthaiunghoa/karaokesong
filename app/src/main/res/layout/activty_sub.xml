@@ -18,6 +18,7 @@
             android:layout_height="wrap_content"
             android:textColor="#ffffff"
             android:textSize="15sp"
+            android:maxLines="2"
             android:textStyle="bold" />
 
     </android.support.v7.widget.Toolbar>

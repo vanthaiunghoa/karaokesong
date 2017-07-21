@@ -15,6 +15,12 @@ public class Config {
 	public static String URL_LOG = "log.php";
 	public static String URL_DOWN = "/link/down.php";
 
+	public static String URL_MAIN1 = "main_1.php";
+	public static String URL_MAIN2 = "main_2.php";
+	public static String URL_MAIN3 = "main_3.php";
+	public static String URL_MAIN4 = "main_4.php";
+
+
 
 	public static String URL_GCM = "gcm/gcm.php";
 	public static String URL_SEND_CHECK = "gcm/gcm_send_check.php";
