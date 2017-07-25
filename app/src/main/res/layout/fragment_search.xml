@@ -26,12 +26,13 @@
 
     </RelativeLayout>
 
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:paddingTop="10dip"
-        android:paddingBottom="10dip"
+        android:paddingBottom="5dip"
         android:paddingLeft="5dip"
         android:paddingRight="5dip"
         android:background="@color/white">
@@ -59,6 +60,8 @@
                 android:layout_height="wrap_content"/>
 
         </LinearLayout>
+
+
         <LinearLayout
             android:background="@drawable/btn_s"
             android:id="@+id/linearLayout_btn"
@@ -80,13 +83,30 @@
                 android:layout_height="wrap_content"/>
             </FrameLayout>
         </LinearLayout>
+    </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:padding="5dip"
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="인기 검색어"
+            android:textColor="#626262"
+            android:textSize="14sp"/>
+        <android.support.v7.widget.RecyclerView
+
+            android:id="@+id/recycler_view1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
     </LinearLayout>
     <View
         android:layout_width="match_parent"
         android:layout_height="1dip"
         android:background="#e9e9e9"/>
-
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/swipe_container"
         android:layout_width="match_parent"

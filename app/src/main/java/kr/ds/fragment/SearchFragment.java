@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,13 +26,19 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 
 import kr.ds.adapter.ListAdapter;
+import kr.ds.adapter.MainItem1Adapter;
+import kr.ds.adapter.MainItem2Adapter;
+import kr.ds.adapter.SearchLogAdapter;
 import kr.ds.config.Config;
 import kr.ds.data.BaseResultListener;
 import kr.ds.data.ListData;
+import kr.ds.data.SearchLogData;
+import kr.ds.handler.SearchLogHandler;
 import kr.ds.karaokesong.R;
 import kr.ds.karaokesong.SubActivity;
 import kr.ds.handler.ListHandler;
 import kr.ds.utils.DsKeyBoardUtils;
+import kr.ds.utils.DsObjectUtils;
 
 /**
  * Created by Administrator on 2016-12-26.
@@ -59,13 +67,15 @@ public class SearchFragment extends BaseFragment implements SwipeRefreshLayout.O
     private Context mContext;
 
     private String mParam = "";
-
     private TextView mTextViewTopName;
 
 
     private EditText mEditTextMessage;
     private LinearLayout mLinearLayoutBtn;
 
+    private RecyclerView.LayoutManager mLayoutManager1;
+    private RecyclerView mRecyclerView1;
+    private SearchLogAdapter mSearchLogAdapter;
 
     @Override
     public void onAttach(Activity activity) {
@@ -76,9 +86,44 @@ public class SearchFragment extends BaseFragment implements SwipeRefreshLayout.O
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
-
         mView = inflater.inflate(R.layout.fragment_search, null);
+
+        mLayoutManager1 = new LinearLayoutManager(mContext, LinearLayoutManager.HORIZONTAL, false);
+        mRecyclerView1 = (RecyclerView)mView.findViewById(R.id.recycler_view1);
+        mRecyclerView1.setHasFixedSize(true);
+        mRecyclerView1.setLayoutManager(mLayoutManager1);
+
+        new SearchLogData().clear().setCallBack(new BaseResultListener() {
+            @Override
+            public <T> void OnComplete() {
+            }
+            @Override
+            public <T> void OnComplete(Object data) {
+                if(data != null){
+                    ArrayList<SearchLogHandler> mData = (ArrayList<SearchLogHandler>) data;
+                    mSearchLogAdapter = new SearchLogAdapter(mContext, mData).setCallBaack(new SearchLogAdapter.EventClickListener() {
+                        @Override
+                        public void onEvent(String message) {
+                            try {
+                                if(!DsObjectUtils.isEmpty(message)) {
+                                    mEditTextMessage.setText(message);
+                                    mParam = "?search=" + URLEncoder.encode(message, "utf-8");
+                                    mProgressBar.setVisibility(View.VISIBLE);
+                                    setList();
+                                }
+                            } catch (UnsupportedEncodingException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                    mRecyclerView1.setAdapter(mSearchLogAdapter);
+                }
+            }
+            @Override
+            public void OnMessage(String str) {
+            }
+        }).setUrl(Config.URL+ Config.URL_XML+ Config.URL_SEARCH_LOG).setParam("").getView();
+
 
         mEditTextMessage = (EditText)mView.findViewById(R.id.editText_message);
         (mLinearLayoutBtn = (LinearLayout)mView.findViewById(R.id.linearLayout_btn)).setOnClickListener(this);
@@ -151,7 +196,6 @@ public class SearchFragment extends BaseFragment implements SwipeRefreshLayout.O
                 if(data != null){
                     mIsTheLoding = false;
                     mPage = 1;
-
                     mMainData = (ArrayList<ListHandler>) data;
                     getTitle(String.valueOf(mMainData.size()));
                     if(mMainData.size() - ((mPage-1)*mNumber) > 0){
@@ -172,10 +216,10 @@ public class SearchFragment extends BaseFragment implements SwipeRefreshLayout.O
                         mListView.setAdapter(mAlphaInAnimationAdapter);
                     }
                 }else{
+                    getTitle("0");
                     mListView.setAdapter(null);
                 }
             }
-
             @Override
             public void OnMessage(String str) {
 
@@ -215,6 +259,7 @@ public class SearchFragment extends BaseFragment implements SwipeRefreshLayout.O
                         mListView.setAdapter(mAlphaInAnimationAdapter);
                     }
                 }else{
+                    getTitle("0");
                     mListView.setAdapter(null);
                 }
             }

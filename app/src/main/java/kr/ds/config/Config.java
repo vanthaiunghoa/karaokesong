@@ -20,6 +20,8 @@ public class Config {
 	public static String URL_MAIN3 = "main_3.php";
 	public static String URL_MAIN4 = "main_4.php";
 
+	public static String URL_SEARCH_LOG = "search_log.php";
+
 
 
 	public static String URL_GCM = "gcm/gcm.php";

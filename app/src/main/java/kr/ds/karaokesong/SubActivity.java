@@ -117,6 +117,17 @@ public class SubActivity extends BaseActivity implements YouTubePlayer.OnInitial
                     }
                 }), file(strDate));
     }
+    private void setAd(){
+        //3번
+        int adCount = SharedPreference.getIntSharedPreference(getApplicationContext(), "ad_count");
+        adCount++;
+        SharedPreference.putSharedPreference(getApplicationContext(),"ad_count",adCount);
+        if(adCount>=3){
+            isAdCheck = true;
+            SharedPreference.putSharedPreference(getApplicationContext(), "ad_count", 0);
+            setFaceBook();
+        }
+    }
 
     private void setFaceBook() {
 
@@ -126,19 +137,13 @@ public class SubActivity extends BaseActivity implements YouTubePlayer.OnInitial
             public void onError(Ad ad, AdError adError) {
                 super.onError(ad, adError);
                 Log.i("TEST","error");
-                Log.i("TEST",adError.toString());
+                Log.i("TEST",adError.getErrorMessage());
 
             }
             @Override
             public void onAdLoaded(Ad ad) {
                 super.onAdLoaded(ad);
-                int random = new Random().nextInt(1);
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        interstitialAdFackBook.show();
-                    }
-                }, random*1000);
+                interstitialAdFackBook.show();
             }
 
             @Override
@@ -220,16 +225,6 @@ public class SubActivity extends BaseActivity implements YouTubePlayer.OnInitial
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        //3번
-        int adCount = SharedPreference.getIntSharedPreference(getApplicationContext(), "ad_count");
-        adCount++;
-        SharedPreference.putSharedPreference(getApplicationContext(),"ad_count",adCount);
-        if(adCount>=3){
-            isAdCheck = true;
-            SharedPreference.putSharedPreference(getApplicationContext(), "ad_count", 0);
-            setFaceBook();
-        }
 
         mBookMarkDB = new BookMarkDB(getApplicationContext());
         mRecordDB = new RecordDB(getApplicationContext());
@@ -347,11 +342,12 @@ public class SubActivity extends BaseActivity implements YouTubePlayer.OnInitial
                         isRecored = false;
                         isPause = false;
                         setAlpha(STOP);
-                        Toast.makeText(getApplicationContext(), "녹음 정지 되었습니다. 내 노래에서 녹음된 곡을 확인 해주세요.^^", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "녹음 정지 되었습니다. 내 노래에서 녹음된 곡을 확인 해주시고 [광고참여]도 부탁드립니다. 감사합니다.", Toast.LENGTH_LONG).show();
                         if(recorder == null) {
                             return;
                         }
                         recorder.stopRecording();
+                        setAd();
                         Log.i("TEST","stopRecording()");
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -532,14 +528,10 @@ public class SubActivity extends BaseActivity implements YouTubePlayer.OnInitial
     public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer youTubePlayer, boolean b) {
         mYouTubePlayer = youTubePlayer;
         if(!DsObjectUtils.isEmpty(mSavedata.getVideo_id())){
-            if(isAdCheck){
+            if (SharedPreference.getBooleanSharedPreference(getApplicationContext(), Config.YOUTUBE_AUTO_PLAY)) {
+                mYouTubePlayer.loadVideo(mSavedata.getVideo_id());
+            } else {
                 mYouTubePlayer.cueVideo(mSavedata.getVideo_id());
-            }else {
-                if (SharedPreference.getBooleanSharedPreference(getApplicationContext(), Config.YOUTUBE_AUTO_PLAY)) {
-                    mYouTubePlayer.loadVideo(mSavedata.getVideo_id());
-                } else {
-                    mYouTubePlayer.cueVideo(mSavedata.getVideo_id());
-                }
             }
         }
         mYouTubePlayer.setPlaybackEventListener(new YouTubePlayer.PlaybackEventListener() {
@@ -637,11 +629,12 @@ public class SubActivity extends BaseActivity implements YouTubePlayer.OnInitial
                             isRecored = false;
                             isPause = false;
                             setAlpha(STOP);
-                            Toast.makeText(getApplicationContext(), "녹음 중지 되었습니다.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), "영상이 종료되어 녹음 정지 되었습니다. 내 노래에서 녹음된 곡을 확인 해주시고 [광고참여]도 부탁드립니다. 감사합니다.", Toast.LENGTH_LONG).show();
                             if(recorder == null) {
                                 return;
                             }
                             recorder.stopRecording();
+                            setAd();
                             Log.i("TEST","stopRecording()");
                         } catch (IOException e) {
                             e.printStackTrace();
@@ -777,7 +770,7 @@ public class SubActivity extends BaseActivity implements YouTubePlayer.OnInitial
                 isRecored = false;
                 isPause = false;
                 setAlpha(STOP);
-                Toast.makeText(getApplicationContext(), "녹음 중지 되었습니다.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "녹음 중 뒤로가기 하여 녹음 정지 되었습니다. 내 노래에서 녹음된 곡을 확인 해주세요.^^", Toast.LENGTH_SHORT).show();
                 if(recorder == null) {
                     return;
                 }

@@ -5,7 +5,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.NestedScrollView;
-import android.support.v7.widget.ForwardingListener;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -13,11 +12,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
-import com.nhaarman.listviewanimations.appearance.simple.AlphaInAnimationAdapter;
-
 import java.util.ArrayList;
 
-import kr.ds.adapter.ListAdapter;
 import kr.ds.adapter.MainItem1Adapter;
 import kr.ds.adapter.MainItem2Adapter;
 import kr.ds.config.Config;
@@ -26,9 +22,7 @@ import kr.ds.data.ChannelData;
 import kr.ds.data.ListData;
 import kr.ds.handler.ChannelHandler;
 import kr.ds.handler.ListHandler;
-import kr.ds.karaokesong.MainActivity;
 import kr.ds.karaokesong.R;
-import kr.ds.widget.ContentViewPager;
 
 /**
  * Created by Administrator on 2017-07-21.
@@ -60,7 +54,7 @@ public class MainFragment extends BaseFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        mView = inflater.inflate(R.layout.framenet_main, null);
+        mView = inflater.inflate(R.layout.fragment_main, null);
 
         mFrameLayoutBg = (FrameLayout) mView.findViewById(R.id.frameLayout_bg);
         mNestedScrollView = (NestedScrollView) mView.findViewById(R.id.scrollView);
