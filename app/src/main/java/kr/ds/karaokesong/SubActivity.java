@@ -122,28 +122,30 @@ public class SubActivity extends BaseActivity implements YouTubePlayer.OnInitial
         int adCount = SharedPreference.getIntSharedPreference(getApplicationContext(), "ad_count");
         adCount++;
         SharedPreference.putSharedPreference(getApplicationContext(),"ad_count",adCount);
-        if(adCount>=3){
+        if(adCount>=2){
             isAdCheck = true;
             SharedPreference.putSharedPreference(getApplicationContext(), "ad_count", 0);
+            if(interstitialAdFackBook.isAdLoaded()){
+                interstitialAdFackBook.show();
+            }
             setFaceBook();
         }
     }
 
     private void setFaceBook() {
-
         interstitialAdFackBook = new com.facebook.ads.InterstitialAd(getApplicationContext(), "1728884537412489_1728884787412464");
         interstitialAdFackBook.setAdListener(new AbstractAdListener() {
             @Override
             public void onError(Ad ad, AdError adError) {
                 super.onError(ad, adError);
-                Log.i("TEST","error");
-                Log.i("TEST",adError.getErrorMessage());
+                Log.i("Error", adError.getErrorMessage()+"");
+                Log.i("Error", adError.getErrorCode()+"");
 
             }
+
             @Override
             public void onAdLoaded(Ad ad) {
                 super.onAdLoaded(ad);
-                interstitialAdFackBook.show();
             }
 
             @Override
@@ -166,6 +168,7 @@ public class SubActivity extends BaseActivity implements YouTubePlayer.OnInitial
                 super.onLoggingImpression(ad);
             }
         });
+
         interstitialAdFackBook.loadAd();
     }
 
@@ -225,7 +228,7 @@ public class SubActivity extends BaseActivity implements YouTubePlayer.OnInitial
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        setFaceBook();
         mBookMarkDB = new BookMarkDB(getApplicationContext());
         mRecordDB = new RecordDB(getApplicationContext());
         if(savedInstanceState != null){
@@ -342,7 +345,7 @@ public class SubActivity extends BaseActivity implements YouTubePlayer.OnInitial
                         isRecored = false;
                         isPause = false;
                         setAlpha(STOP);
-                        Toast.makeText(getApplicationContext(), "녹음 정지 되었습니다. 내 노래에서 녹음된 곡을 확인 해주시고 [광고참여]도 부탁드립니다. 감사합니다.", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "내 노래에서 녹음된 곡을 확인 해주시고 [광고참여]도 부탁드립니다. 감사합니다.", Toast.LENGTH_LONG).show();
                         if(recorder == null) {
                             return;
                         }
@@ -629,7 +632,7 @@ public class SubActivity extends BaseActivity implements YouTubePlayer.OnInitial
                             isRecored = false;
                             isPause = false;
                             setAlpha(STOP);
-                            Toast.makeText(getApplicationContext(), "영상이 종료되어 녹음 정지 되었습니다. 내 노래에서 녹음된 곡을 확인 해주시고 [광고참여]도 부탁드립니다. 감사합니다.", Toast.LENGTH_LONG).show();
+                            Toast.makeText(getApplicationContext(), "내 노래에서 녹음된 곡을 확인 해주시고 [광고참여]도 부탁드립니다. 감사합니다.", Toast.LENGTH_LONG).show();
                             if(recorder == null) {
                                 return;
                             }
