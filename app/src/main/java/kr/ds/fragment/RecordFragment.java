@@ -54,8 +54,8 @@ import kr.ds.utils.DsObjectUtils;
  */
 public class RecordFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener {
 
-    private ArrayList<RecordHandler> mData;
-    private ArrayList<RecordHandler> mMainData;
+    private ArrayList<RecordHandler> mData = null;
+    private ArrayList<RecordHandler> mMainData = null;
     private int mNumber = 10;
     private int mPage = 1;
     private int startPage = 0;
@@ -396,7 +396,8 @@ public class RecordFragment extends BaseFragment implements SwipeRefreshLayout.O
     }
 
     @Override
-    public void Tab() {
+    public void Tab(int tab) {
+
         if (mMediaPlayer != null) {
             mMediaPlayer.stop();
             mMediaPlayer.reset();
@@ -404,6 +405,11 @@ public class RecordFragment extends BaseFragment implements SwipeRefreshLayout.O
             mMediaPlayer = null;
             setLayoutReset();
         }
+
+        if(tab == 6) {
+
+        }
+
     }
 
 }

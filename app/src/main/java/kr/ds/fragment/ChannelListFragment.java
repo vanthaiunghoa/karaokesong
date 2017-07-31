@@ -299,7 +299,7 @@ public class ChannelListFragment extends BaseFragment implements SwipeRefreshLay
     }
 
     @Override
-    public void Tab() {
+    public void Tab(int tab) {
 
     }
 }

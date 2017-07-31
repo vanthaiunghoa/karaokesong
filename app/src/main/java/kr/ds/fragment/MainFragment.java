@@ -173,6 +173,6 @@ public class MainFragment extends BaseFragment {
     }
 
     @Override
-    public void Tab() {
+    public void Tab(int tab) {
     }
 }

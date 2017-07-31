@@ -28,6 +28,10 @@ import android.widget.Toast;
 import com.facebook.ads.AbstractAdListener;
 import com.facebook.ads.Ad;
 import com.facebook.ads.AdError;
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.NativeExpressAdView;
+import com.google.android.gms.ads.VideoController;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerFragment;
@@ -117,60 +121,8 @@ public class SubActivity extends BaseActivity implements YouTubePlayer.OnInitial
                     }
                 }), file(strDate));
     }
-    private void setAd(){
-        //3번
-        int adCount = SharedPreference.getIntSharedPreference(getApplicationContext(), "ad_count");
-        adCount++;
-        SharedPreference.putSharedPreference(getApplicationContext(),"ad_count",adCount);
-        if(adCount>=2){
-            isAdCheck = true;
-            SharedPreference.putSharedPreference(getApplicationContext(), "ad_count", 0);
-            if(interstitialAdFackBook.isAdLoaded()){
-                interstitialAdFackBook.show();
-            }
-            setFaceBook();
-        }
-    }
 
-    private void setFaceBook() {
-        interstitialAdFackBook = new com.facebook.ads.InterstitialAd(getApplicationContext(), "1728884537412489_1728884787412464");
-        interstitialAdFackBook.setAdListener(new AbstractAdListener() {
-            @Override
-            public void onError(Ad ad, AdError adError) {
-                super.onError(ad, adError);
-                Log.i("Error", adError.getErrorMessage()+"");
-                Log.i("Error", adError.getErrorCode()+"");
 
-            }
-
-            @Override
-            public void onAdLoaded(Ad ad) {
-                super.onAdLoaded(ad);
-            }
-
-            @Override
-            public void onAdClicked(Ad ad) {
-                super.onAdClicked(ad);
-            }
-
-            @Override
-            public void onInterstitialDisplayed(Ad ad) {
-                super.onInterstitialDisplayed(ad);
-            }
-
-            @Override
-            public void onInterstitialDismissed(Ad ad) {
-                super.onInterstitialDismissed(ad);
-            }
-
-            @Override
-            public void onLoggingImpression(Ad ad) {
-                super.onLoggingImpression(ad);
-            }
-        });
-
-        interstitialAdFackBook.loadAd();
-    }
 
     private ListHandler mSavedata;
     public static final String API_KEY = "AIzaSyAkfPX3uF_hALFjYOUhwlhewgaqewl08XE";
@@ -221,14 +173,12 @@ public class SubActivity extends BaseActivity implements YouTubePlayer.OnInitial
 
     private TextView mTextViewTime;
     private int time = 0;
-    private boolean isAdCheck = false; //광고 여부
-    private com.facebook.ads.InterstitialAd interstitialAdFackBook;
 
+    private NativeExpressAdView mAdView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setFaceBook();
         mBookMarkDB = new BookMarkDB(getApplicationContext());
         mRecordDB = new RecordDB(getApplicationContext());
         if(savedInstanceState != null){
@@ -238,6 +188,20 @@ public class SubActivity extends BaseActivity implements YouTubePlayer.OnInitial
         }
         setLog();
         setContentView(R.layout.activty_sub);
+        mAdView = (NativeExpressAdView) findViewById(R.id.adView);
+        mAdView.setAdListener(new AdListener() {
+            @Override
+            public void onAdLoaded() {
+                mAdView.setVisibility(View.VISIBLE);
+            }
+            @Override
+            public void onAdFailedToLoad(int i) {
+                super.onAdFailedToLoad(i);
+                mAdView.setVisibility(View.GONE);
+            }
+        });
+        mAdView.loadAd(new AdRequest.Builder().build());
+
         mTopName = (TextView) findViewById(R.id.textView_top_name);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
 
@@ -345,12 +309,11 @@ public class SubActivity extends BaseActivity implements YouTubePlayer.OnInitial
                         isRecored = false;
                         isPause = false;
                         setAlpha(STOP);
-                        Toast.makeText(getApplicationContext(), "내 노래에서 녹음된 곡을 확인 해주시고 [광고참여]도 부탁드립니다. 감사합니다.", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "내 노래에서 녹음된 곡을 확인 해주시기 바랍니다. 감사합니다.", Toast.LENGTH_LONG).show();
                         if(recorder == null) {
                             return;
                         }
                         recorder.stopRecording();
-                        setAd();
                         Log.i("TEST","stopRecording()");
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -632,12 +595,11 @@ public class SubActivity extends BaseActivity implements YouTubePlayer.OnInitial
                             isRecored = false;
                             isPause = false;
                             setAlpha(STOP);
-                            Toast.makeText(getApplicationContext(), "내 노래에서 녹음된 곡을 확인 해주시고 [광고참여]도 부탁드립니다. 감사합니다.", Toast.LENGTH_LONG).show();
+                            Toast.makeText(getApplicationContext(), "내 노래에서 녹음된 곡을 확인 해주시기 바랍니다. 감사합니다.", Toast.LENGTH_LONG).show();
                             if(recorder == null) {
                                 return;
                             }
                             recorder.stopRecording();
-                            setAd();
                             Log.i("TEST","stopRecording()");
                         } catch (IOException e) {
                             e.printStackTrace();
@@ -773,7 +735,7 @@ public class SubActivity extends BaseActivity implements YouTubePlayer.OnInitial
                 isRecored = false;
                 isPause = false;
                 setAlpha(STOP);
-                Toast.makeText(getApplicationContext(), "녹음 중 뒤로가기 하여 녹음 정지 되었습니다. 내 노래에서 녹음된 곡을 확인 해주세요.^^", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "녹음 중 뒤로가기 하여 녹음 정지 되었습니다. 내 노래에서 녹음된 곡을 확인 해주시기 바랍니다. 감사합니다.", Toast.LENGTH_SHORT).show();
                 if(recorder == null) {
                     return;
                 }

@@ -327,7 +327,7 @@ public class SearchFragment extends BaseFragment implements SwipeRefreshLayout.O
     }
 
     @Override
-    public void Tab() {
+    public void Tab(int tab) {
 
     }
 }

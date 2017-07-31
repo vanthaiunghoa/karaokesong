@@ -199,11 +199,11 @@ public class MainActivity extends MainBaseActivity implements View.OnClickListen
         setHideFragment(mFt);
 
         if(mFragment6 != null){
-            mFragment6.Tab();
+            mFragment6.Tab(tab);
         }
         if(tab == 5){
             if(mFragment5 !=  null) {
-                mFragment5.Tab();
+                mFragment5.Tab(tab);
             }
         }
 

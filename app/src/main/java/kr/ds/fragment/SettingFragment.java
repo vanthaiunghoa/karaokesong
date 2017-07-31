@@ -113,7 +113,7 @@ import kr.ds.utils.gcmHandler;
 	}
 
 	@Override
-	public void Tab() {
+	public void Tab(int tab) {
 		mScrollView.smoothScrollTo(0,0);
 
 	}
