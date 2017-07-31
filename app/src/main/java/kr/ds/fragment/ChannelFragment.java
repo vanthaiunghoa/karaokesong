@@ -15,6 +15,9 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.NativeExpressAdView;
 import com.nhaarman.listviewanimations.appearance.simple.AlphaInAnimationAdapter;
 
 import java.util.ArrayList;

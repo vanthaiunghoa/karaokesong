@@ -19,6 +19,9 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.NativeExpressAdView;
 import com.nhaarman.listviewanimations.appearance.simple.AlphaInAnimationAdapter;
 
 import java.io.UnsupportedEncodingException;
@@ -77,6 +80,8 @@ public class SearchFragment extends BaseFragment implements SwipeRefreshLayout.O
     private RecyclerView mRecyclerView1;
     private SearchLogAdapter mSearchLogAdapter;
 
+    private View mAdmobView;
+    private NativeExpressAdView mNativeExpressAdView;
     @Override
     public void onAttach(Activity activity) {
         // TODO Auto-generated method stub
@@ -87,6 +92,21 @@ public class SearchFragment extends BaseFragment implements SwipeRefreshLayout.O
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.fragment_search, null);
+        mAdmobView = (View) inflater.inflate(R.layout.native_admob, null);
+        mNativeExpressAdView = (NativeExpressAdView) mAdmobView.findViewById(R.id.adView);
+        mNativeExpressAdView.setAdListener(new AdListener() {
+            @Override
+            public void onAdLoaded() {
+                mNativeExpressAdView.setVisibility(View.VISIBLE);
+            }
+            @Override
+            public void onAdFailedToLoad(int i) {
+                super.onAdFailedToLoad(i);
+                mNativeExpressAdView.setVisibility(View.GONE);
+            }
+        });
+        mNativeExpressAdView.loadAd(new AdRequest.Builder().build());
+
 
         mLayoutManager1 = new LinearLayoutManager(mContext, LinearLayoutManager.HORIZONTAL, false);
         mRecyclerView1 = (RecyclerView)mView.findViewById(R.id.recycler_view1);
@@ -130,14 +150,16 @@ public class SearchFragment extends BaseFragment implements SwipeRefreshLayout.O
 
         mTextViewTopName = (TextView)mView.findViewById(R.id.textView_top_name);
         mListView = (ListView)mView.findViewById(R.id.listView);
+        mListView.addHeaderView(mAdmobView);
         //mListView.setScrollViewCallbacks(this);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
                 // TODO Auto-generated method stub
+                int header_position = position-1;
                 Intent intent = new Intent(mContext, SubActivity.class);
-                intent.putExtra("data", mData.get(position));
+                intent.putExtra("data", mData.get(header_position));
                 startActivity(intent);
 
             }

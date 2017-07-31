@@ -17,6 +17,9 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.NativeExpressAdView;
 import com.nhaarman.listviewanimations.appearance.simple.AlphaInAnimationAdapter;
 
 import java.util.ArrayList;
@@ -65,7 +68,6 @@ public class BookMarkFragment extends BaseFragment implements SwipeRefreshLayout
     private Cursor mCursor;
 
     private final static int BOOKMARK = 0;
-
 
     @Override
     public void onAttach(Activity activity) {

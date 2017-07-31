@@ -30,6 +30,7 @@ import com.facebook.ads.Ad;
 import com.facebook.ads.AdError;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.NativeExpressAdView;
 import com.google.android.gms.ads.VideoController;
 import com.google.android.youtube.player.YouTubeInitializationResult;
@@ -186,7 +187,7 @@ public class SubActivity extends BaseActivity implements YouTubePlayer.OnInitial
         }else{
             mSavedata = (ListHandler) getIntent().getParcelableExtra("data");
         }
-        setLog();
+
         setContentView(R.layout.activty_sub);
         mAdView = (NativeExpressAdView) findViewById(R.id.adView);
         mAdView.setAdListener(new AdListener() {
@@ -201,7 +202,7 @@ public class SubActivity extends BaseActivity implements YouTubePlayer.OnInitial
             }
         });
         mAdView.loadAd(new AdRequest.Builder().build());
-
+        setLog();
         mTopName = (TextView) findViewById(R.id.textView_top_name);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
 

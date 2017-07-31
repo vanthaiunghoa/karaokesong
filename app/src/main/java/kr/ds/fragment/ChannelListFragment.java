@@ -16,6 +16,9 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.NativeExpressAdView;
 import com.nhaarman.listviewanimations.appearance.simple.AlphaInAnimationAdapter;
 
 import java.util.ArrayList;
@@ -65,6 +68,8 @@ public class ChannelListFragment extends BaseFragment implements SwipeRefreshLay
     private String mList_type = "1";
     private String mCcd_uid = "";
     private ChannelHandler mSavedata;
+    private View mAdmobView;
+    private NativeExpressAdView mNativeExpressAdView;
 
 
     @Override
@@ -79,6 +84,21 @@ public class ChannelListFragment extends BaseFragment implements SwipeRefreshLay
 
 
         mView = inflater.inflate(R.layout.fragment_channel_list, null);
+        mAdmobView = (View) inflater.inflate(R.layout.native_admob, null);
+        mNativeExpressAdView = (NativeExpressAdView) mAdmobView.findViewById(R.id.adView);
+        mNativeExpressAdView.setAdListener(new AdListener() {
+            @Override
+            public void onAdLoaded() {
+                mNativeExpressAdView.setVisibility(View.VISIBLE);
+            }
+            @Override
+            public void onAdFailedToLoad(int i) {
+                super.onAdFailedToLoad(i);
+                mNativeExpressAdView.setVisibility(View.GONE);
+            }
+        });
+        mNativeExpressAdView.loadAd(new AdRequest.Builder().build());
+
         mFabSpeedDial = (FabSpeedDial) mView.findViewById(R.id.fab_speed_dial);
         mFabSpeedDial.setMenuListener(new SimpleMenuListenerAdapter() {
             @Override
@@ -103,13 +123,15 @@ public class ChannelListFragment extends BaseFragment implements SwipeRefreshLay
         });
 
         mListView = (ListView)mView.findViewById(R.id.listView);
+        mListView.addHeaderView(mAdmobView);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
                 // TODO Auto-generated method stub
+                int header_position = position-1;
                 Intent intent = new Intent(mContext, SubActivity.class);
-                intent.putExtra("data", mData.get(position));
+                intent.putExtra("data", mData.get(header_position));
                 startActivity(intent);
 
             }

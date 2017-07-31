@@ -26,6 +26,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.NativeExpressAdView;
 import com.google.android.gms.vision.text.Text;
 import com.nhaarman.listviewanimations.appearance.simple.AlphaInAnimationAdapter;
 
@@ -85,6 +88,7 @@ public class RecordFragment extends BaseFragment implements SwipeRefreshLayout.O
 
     private TextView mTextViewTopName;
 
+
     @Override
     public void onAttach(Activity activity) {
         // TODO Auto-generated method stub
@@ -95,7 +99,6 @@ public class RecordFragment extends BaseFragment implements SwipeRefreshLayout.O
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.fragment_record_list, null);
-
         mTextViewTopName = (TextView)mView.findViewById(R.id.textView_top_name);
         mTextViewTime = (TextView) mView.findViewById(R.id.textView_time);
         mTextViewTitle = (TextView) mView.findViewById(R.id.textView_title);
@@ -136,7 +139,6 @@ public class RecordFragment extends BaseFragment implements SwipeRefreshLayout.O
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
                 // TODO Auto-generated method stub
-
                 try {
                     if(!DsObjectUtils.isEmpty(mData.get(position).getTitle())){
                         mTextViewTitle.setText(mData.get(position).getTitle());

@@ -11,6 +11,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
+
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.NativeExpressAdView;
 
 import java.util.ArrayList;
 
@@ -44,6 +49,10 @@ public class MainFragment extends BaseFragment {
     private FrameLayout mFrameLayoutBg;
     private NestedScrollView mNestedScrollView;
 
+    private View mAdmobView;
+    private NativeExpressAdView mNativeExpressAdView;
+    private LinearLayout mLinearLayoutNative;
+
     @Override
     public void onAttach(Activity activity) {
         // TODO Auto-generated method stub
@@ -55,6 +64,22 @@ public class MainFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.fragment_main, null);
+        mLinearLayoutNative = (LinearLayout) mView.findViewById(R.id.linearLayout_native);
+        mAdmobView = (View) inflater.inflate(R.layout.native_admob, null);
+        mLinearLayoutNative.addView(mAdmobView);
+        mNativeExpressAdView = (NativeExpressAdView) mAdmobView.findViewById(R.id.adView);
+        mNativeExpressAdView.setAdListener(new AdListener() {
+            @Override
+            public void onAdLoaded() {
+                mLinearLayoutNative.setVisibility(View.VISIBLE);
+            }
+            @Override
+            public void onAdFailedToLoad(int i) {
+                super.onAdFailedToLoad(i);
+                mLinearLayoutNative.setVisibility(View.GONE);
+            }
+        });
+        mNativeExpressAdView.loadAd(new AdRequest.Builder().build());
 
         mFrameLayoutBg = (FrameLayout) mView.findViewById(R.id.frameLayout_bg);
         mNestedScrollView = (NestedScrollView) mView.findViewById(R.id.scrollView);
