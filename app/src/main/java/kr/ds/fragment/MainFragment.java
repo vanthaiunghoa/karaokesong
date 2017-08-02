@@ -13,10 +13,6 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
-import com.google.android.gms.ads.AdListener;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.NativeExpressAdView;
-
 import java.util.ArrayList;
 
 import kr.ds.adapter.MainItem1Adapter;
@@ -28,6 +24,8 @@ import kr.ds.data.ListData;
 import kr.ds.handler.ChannelHandler;
 import kr.ds.handler.ListHandler;
 import kr.ds.karaokesong.R;
+import kr.ds.widget.AdAdmobNativeView;
+import kr.ds.widget.AdFaceBookNativeView;
 
 /**
  * Created by Administrator on 2017-07-21.
@@ -49,9 +47,9 @@ public class MainFragment extends BaseFragment {
     private FrameLayout mFrameLayoutBg;
     private NestedScrollView mNestedScrollView;
 
-    private View mAdmobView;
-    private NativeExpressAdView mNativeExpressAdView;
     private LinearLayout mLinearLayoutNative;
+    private AdFaceBookNativeView mAdFaceBookNativeView;
+    private AdAdmobNativeView mAdAdmobNativeView;
 
     @Override
     public void onAttach(Activity activity) {
@@ -65,21 +63,34 @@ public class MainFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.fragment_main, null);
         mLinearLayoutNative = (LinearLayout) mView.findViewById(R.id.linearLayout_native);
-        mAdmobView = (View) inflater.inflate(R.layout.native_admob, null);
-        mLinearLayoutNative.addView(mAdmobView);
-        mNativeExpressAdView = (NativeExpressAdView) mAdmobView.findViewById(R.id.adView);
-        mNativeExpressAdView.setAdListener(new AdListener() {
+
+        mAdFaceBookNativeView = new AdFaceBookNativeView(mContext);
+        mAdFaceBookNativeView.setContainer(mLinearLayoutNative).setLayout().setCallBack(new AdFaceBookNativeView.ResultListener() {
             @Override
-            public void onAdLoaded() {
-                mLinearLayoutNative.setVisibility(View.VISIBLE);
+            public <T> void OnLoad() {
+
             }
+
             @Override
-            public void onAdFailedToLoad(int i) {
-                super.onAdFailedToLoad(i);
-                mLinearLayoutNative.setVisibility(View.GONE);
+            public <T> void OnFail() {
+                if(mLinearLayoutNative.getChildCount() > 0) {
+                    mLinearLayoutNative.removeAllViews();
+                }
+                mAdAdmobNativeView = new AdAdmobNativeView(mContext);
+                mAdAdmobNativeView.setContainer(mLinearLayoutNative).setLayout().setCallBack(new AdAdmobNativeView.ResultListener() {
+                    @Override
+                    public <T> void OnLoad() {
+
+                    }
+
+                    @Override
+                    public <T> void OnFail() {
+                        mLinearLayoutNative.setVisibility(View.GONE);
+                    }
+                });
             }
         });
-        mNativeExpressAdView.loadAd(new AdRequest.Builder().build());
+
 
         mFrameLayoutBg = (FrameLayout) mView.findViewById(R.id.frameLayout_bg);
         mNestedScrollView = (NestedScrollView) mView.findViewById(R.id.scrollView);

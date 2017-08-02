@@ -78,6 +78,7 @@
                     android:id="@+id/linearLayout_native"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:minHeight="100dip"
                     android:orientation="vertical">
                 </LinearLayout>
 

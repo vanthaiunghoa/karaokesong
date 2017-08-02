@@ -198,6 +198,7 @@ public class SubActivity extends BaseActivity implements YouTubePlayer.OnInitial
             @Override
             public void onAdFailedToLoad(int i) {
                 super.onAdFailedToLoad(i);
+                Log.i("TEST",i+"");
                 mAdView.setVisibility(View.GONE);
             }
         });
