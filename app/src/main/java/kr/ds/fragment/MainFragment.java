@@ -48,6 +48,7 @@ public class MainFragment extends BaseFragment {
     private NestedScrollView mNestedScrollView;
 
     private LinearLayout mLinearLayoutNative;
+    private LinearLayout mLinearLayoutNative2;
     private AdFaceBookNativeView mAdFaceBookNativeView;
     private AdAdmobNativeView mAdAdmobNativeView;
 
@@ -63,14 +64,15 @@ public class MainFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.fragment_main, null);
         mLinearLayoutNative = (LinearLayout) mView.findViewById(R.id.linearLayout_native);
+        mLinearLayoutNative2 = (LinearLayout) mView.findViewById(R.id.linearLayout_native2);
+
 
         mAdFaceBookNativeView = new AdFaceBookNativeView(mContext);
-        mAdFaceBookNativeView.setContainer(mLinearLayoutNative).setLayout().setCallBack(new AdFaceBookNativeView.ResultListener() {
+        mAdFaceBookNativeView.setContainer(mLinearLayoutNative).setLayout(R.layout.native_facebook).setCallBack(new AdFaceBookNativeView.ResultListener() {
             @Override
             public <T> void OnLoad() {
 
             }
-
             @Override
             public <T> void OnFail() {
                 if(mLinearLayoutNative.getChildCount() > 0) {
@@ -90,6 +92,34 @@ public class MainFragment extends BaseFragment {
                 });
             }
         });
+
+        mAdFaceBookNativeView = new AdFaceBookNativeView(mContext);
+        mAdFaceBookNativeView.setContainer(mLinearLayoutNative2).setLayout(R.layout.native_facebook).setCallBack(new AdFaceBookNativeView.ResultListener() {
+            @Override
+            public <T> void OnLoad() {
+
+            }
+            @Override
+            public <T> void OnFail() {
+                if(mLinearLayoutNative2.getChildCount() > 0) {
+                    mLinearLayoutNative2.removeAllViews();
+                }
+                mAdAdmobNativeView = new AdAdmobNativeView(mContext);
+                mAdAdmobNativeView.setContainer(mLinearLayoutNative2).setLayout().setCallBack(new AdAdmobNativeView.ResultListener() {
+                    @Override
+                    public <T> void OnLoad() {
+
+                    }
+
+                    @Override
+                    public <T> void OnFail() {
+                        mLinearLayoutNative2.setVisibility(View.GONE);
+                    }
+                });
+            }
+        });
+
+
 
 
         mFrameLayoutBg = (FrameLayout) mView.findViewById(R.id.frameLayout_bg);

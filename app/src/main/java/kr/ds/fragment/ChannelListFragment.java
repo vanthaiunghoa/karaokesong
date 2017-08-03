@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -34,6 +35,8 @@ import kr.ds.handler.ListHandler;
 import kr.ds.karaokesong.R;
 import kr.ds.karaokesong.SubActivity;
 import kr.ds.utils.DsObjectUtils;
+import kr.ds.widget.AdAdmobNativeView;
+import kr.ds.widget.AdFaceBookNativeView;
 
 
 /**
@@ -68,8 +71,10 @@ public class ChannelListFragment extends BaseFragment implements SwipeRefreshLay
     private String mList_type = "1";
     private String mCcd_uid = "";
     private ChannelHandler mSavedata;
-    private View mAdmobView;
-    private NativeExpressAdView mNativeExpressAdView;
+
+    private LinearLayout mLinearLayoutNative;
+    private AdFaceBookNativeView mAdFaceBookNativeView;
+    private AdAdmobNativeView mAdAdmobNativeView;
 
 
     @Override
@@ -84,20 +89,32 @@ public class ChannelListFragment extends BaseFragment implements SwipeRefreshLay
 
 
         mView = inflater.inflate(R.layout.fragment_channel_list, null);
-        mAdmobView = (View) inflater.inflate(R.layout.native_admob, null);
-        mNativeExpressAdView = (NativeExpressAdView) mAdmobView.findViewById(R.id.adView);
-        mNativeExpressAdView.setAdListener(new AdListener() {
+        mLinearLayoutNative = (LinearLayout) inflater.inflate(R.layout.native_container, null);
+        mAdFaceBookNativeView = new AdFaceBookNativeView(mContext);
+        mAdFaceBookNativeView.setContainer(mLinearLayoutNative).setLayout(R.layout.native_facebook2).setCallBack(new AdFaceBookNativeView.ResultListener() {
             @Override
-            public void onAdLoaded() {
-                mNativeExpressAdView.setVisibility(View.VISIBLE);
+            public <T> void OnLoad() {
+
             }
             @Override
-            public void onAdFailedToLoad(int i) {
-                super.onAdFailedToLoad(i);
-                mNativeExpressAdView.setVisibility(View.GONE);
+            public <T> void OnFail() {
+                if(mLinearLayoutNative.getChildCount() > 0) {
+                    mLinearLayoutNative.removeAllViews();
+                }
+                mAdAdmobNativeView = new AdAdmobNativeView(mContext);
+                mAdAdmobNativeView.setContainer(mLinearLayoutNative).setLayout().setCallBack(new AdAdmobNativeView.ResultListener() {
+                    @Override
+                    public <T> void OnLoad() {
+
+                    }
+
+                    @Override
+                    public <T> void OnFail() {
+                        mLinearLayoutNative.setVisibility(View.GONE);
+                    }
+                });
             }
         });
-        mNativeExpressAdView.loadAd(new AdRequest.Builder().build());
 
         mFabSpeedDial = (FabSpeedDial) mView.findViewById(R.id.fab_speed_dial);
         mFabSpeedDial.setMenuListener(new SimpleMenuListenerAdapter() {
@@ -123,7 +140,7 @@ public class ChannelListFragment extends BaseFragment implements SwipeRefreshLay
         });
 
         mListView = (ListView)mView.findViewById(R.id.listView);
-        mListView.addHeaderView(mAdmobView);
+        mListView.addHeaderView(mLinearLayoutNative);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view,

@@ -65,7 +65,7 @@ public class AdFaceBookNativeView extends View {
         return this;
     }
 
-    public AdFaceBookNativeView setLayout(){
+    public AdFaceBookNativeView setLayout(final int resource){
         nativeAd = new NativeAd(mContext, "1728884537412489_1750475201920089");
         nativeAd.setAdListener(new AbstractAdListener() {
             @Override
@@ -83,7 +83,7 @@ public class AdFaceBookNativeView extends View {
                 super.onAdLoaded(ad);
 
                 LayoutInflater inflater = (LayoutInflater)mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                mFaceBookView = inflater.inflate(R.layout.native_facebook, null);
+                mFaceBookView = inflater.inflate(resource, null);
                 mContainer.addView(mFaceBookView);
 
                 // Create native UI using the ad metadata.

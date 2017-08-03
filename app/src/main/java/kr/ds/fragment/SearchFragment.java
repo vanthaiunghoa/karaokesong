@@ -42,6 +42,8 @@ import kr.ds.karaokesong.SubActivity;
 import kr.ds.handler.ListHandler;
 import kr.ds.utils.DsKeyBoardUtils;
 import kr.ds.utils.DsObjectUtils;
+import kr.ds.widget.AdAdmobNativeView;
+import kr.ds.widget.AdFaceBookNativeView;
 
 /**
  * Created by Administrator on 2016-12-26.
@@ -80,8 +82,11 @@ public class SearchFragment extends BaseFragment implements SwipeRefreshLayout.O
     private RecyclerView mRecyclerView1;
     private SearchLogAdapter mSearchLogAdapter;
 
-    private View mAdmobView;
-    private NativeExpressAdView mNativeExpressAdView;
+
+    private LinearLayout mLinearLayoutNative;
+    private AdFaceBookNativeView mAdFaceBookNativeView;
+    private AdAdmobNativeView mAdAdmobNativeView;
+
     @Override
     public void onAttach(Activity activity) {
         // TODO Auto-generated method stub
@@ -92,20 +97,34 @@ public class SearchFragment extends BaseFragment implements SwipeRefreshLayout.O
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.fragment_search, null);
-        mAdmobView = (View) inflater.inflate(R.layout.native_admob, null);
-        mNativeExpressAdView = (NativeExpressAdView) mAdmobView.findViewById(R.id.adView);
-        mNativeExpressAdView.setAdListener(new AdListener() {
+
+        mLinearLayoutNative = (LinearLayout) inflater.inflate(R.layout.native_container, null);
+        mAdFaceBookNativeView = new AdFaceBookNativeView(mContext);
+        mAdFaceBookNativeView.setContainer(mLinearLayoutNative).setLayout(R.layout.native_facebook2).setCallBack(new AdFaceBookNativeView.ResultListener() {
             @Override
-            public void onAdLoaded() {
-                mNativeExpressAdView.setVisibility(View.VISIBLE);
+            public <T> void OnLoad() {
+
             }
             @Override
-            public void onAdFailedToLoad(int i) {
-                super.onAdFailedToLoad(i);
-                mNativeExpressAdView.setVisibility(View.GONE);
+            public <T> void OnFail() {
+                if(mLinearLayoutNative.getChildCount() > 0) {
+                    mLinearLayoutNative.removeAllViews();
+                }
+                mAdAdmobNativeView = new AdAdmobNativeView(mContext);
+                mAdAdmobNativeView.setContainer(mLinearLayoutNative).setLayout().setCallBack(new AdAdmobNativeView.ResultListener() {
+                    @Override
+                    public <T> void OnLoad() {
+
+                    }
+
+                    @Override
+                    public <T> void OnFail() {
+                        mLinearLayoutNative.setVisibility(View.GONE);
+                    }
+                });
             }
         });
-        mNativeExpressAdView.loadAd(new AdRequest.Builder().build());
+
 
 
         mLayoutManager1 = new LinearLayoutManager(mContext, LinearLayoutManager.HORIZONTAL, false);
@@ -150,7 +169,7 @@ public class SearchFragment extends BaseFragment implements SwipeRefreshLayout.O
 
         mTextViewTopName = (TextView)mView.findViewById(R.id.textView_top_name);
         mListView = (ListView)mView.findViewById(R.id.listView);
-        mListView.addHeaderView(mAdmobView);
+        mListView.addHeaderView(mLinearLayoutNative);
         //mListView.setScrollViewCallbacks(this);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

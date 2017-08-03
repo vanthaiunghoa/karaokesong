@@ -60,6 +60,8 @@ import kr.ds.handler.ListHandler;
 import kr.ds.utils.DsObjectUtils;
 import kr.ds.utils.SharedPreference;
 import kr.ds.view.VisualizerView;
+import kr.ds.widget.AdAdmobNativeView;
+import kr.ds.widget.AdFaceBookNativeView;
 import kr.ds.widget.ScrollListView;
 import omrecorder.AudioChunk;
 import omrecorder.AudioSource;
@@ -175,7 +177,11 @@ public class SubActivity extends BaseActivity implements YouTubePlayer.OnInitial
     private TextView mTextViewTime;
     private int time = 0;
 
-    private NativeExpressAdView mAdView;
+    private LinearLayout mLinearLayoutNative;
+    private AdFaceBookNativeView mAdFaceBookNativeView;
+    private AdAdmobNativeView mAdAdmobNativeView;
+
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -189,20 +195,32 @@ public class SubActivity extends BaseActivity implements YouTubePlayer.OnInitial
         }
 
         setContentView(R.layout.activty_sub);
-        mAdView = (NativeExpressAdView) findViewById(R.id.adView);
-        mAdView.setAdListener(new AdListener() {
+        mLinearLayoutNative = (LinearLayout) getLayoutInflater().inflate(R.layout.native_container, null);
+        mAdFaceBookNativeView = new AdFaceBookNativeView(getApplicationContext());
+        mAdFaceBookNativeView.setContainer(mLinearLayoutNative).setLayout(R.layout.native_facebook2).setCallBack(new AdFaceBookNativeView.ResultListener() {
             @Override
-            public void onAdLoaded() {
-                mAdView.setVisibility(View.VISIBLE);
+            public <T> void OnLoad() {
+
             }
             @Override
-            public void onAdFailedToLoad(int i) {
-                super.onAdFailedToLoad(i);
-                Log.i("TEST",i+"");
-                mAdView.setVisibility(View.GONE);
+            public <T> void OnFail() {
+                if(mLinearLayoutNative.getChildCount() > 0) {
+                    mLinearLayoutNative.removeAllViews();
+                }
+                mAdAdmobNativeView = new AdAdmobNativeView(getApplicationContext());
+                mAdAdmobNativeView.setContainer(mLinearLayoutNative).setLayout().setCallBack(new AdAdmobNativeView.ResultListener() {
+                    @Override
+                    public <T> void OnLoad() {
+
+                    }
+
+                    @Override
+                    public <T> void OnFail() {
+                        mLinearLayoutNative.setVisibility(View.GONE);
+                    }
+                });
             }
         });
-        mAdView.loadAd(new AdRequest.Builder().build());
         setLog();
         mTopName = (TextView) findViewById(R.id.textView_top_name);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -324,6 +342,7 @@ public class SubActivity extends BaseActivity implements YouTubePlayer.OnInitial
             }
         });
         mListView = (ScrollListView) findViewById(R.id.listView);
+        mListView.addHeaderView(mLinearLayoutNative);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
