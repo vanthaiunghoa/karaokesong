@@ -23,6 +23,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,6 +37,7 @@ import java.io.File;
 import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InterruptedIOException;
 import java.util.ArrayList;
 
 import io.github.yavski.fabspeeddial.FabSpeedDial;
@@ -50,6 +52,9 @@ import kr.ds.handler.RecordHandler;
 import kr.ds.karaokesong.R;
 import kr.ds.karaokesong.SubActivity;
 import kr.ds.utils.DsObjectUtils;
+import kr.ds.utils.SharedPreference;
+
+import static kr.ds.utils.SharedPreference.getBooleanSharedPreference;
 
 
 /**
@@ -88,7 +93,19 @@ public class RecordFragment extends BaseFragment implements SwipeRefreshLayout.O
 
     private TextView mTextViewTopName;
 
+    private SeekBar mSeekBar;
+    private Boolean isPlaying = false;
 
+    class MyThread extends Thread {
+        @Override
+        public void run() {
+            while(isPlaying) {
+                mSeekBar.setProgress(mMediaPlayer.getCurrentPosition());
+            }
+        }
+    }
+
+    private MyThread mMyThread;
     @Override
     public void onAttach(Activity activity) {
         // TODO Auto-generated method stub
@@ -98,7 +115,37 @@ public class RecordFragment extends BaseFragment implements SwipeRefreshLayout.O
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        mMyThread = new MyThread();
+
         mView = inflater.inflate(R.layout.fragment_record_list, null);
+        mSeekBar = (SeekBar)mView.findViewById(R.id.seekBar);
+        mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                if (mMediaPlayer != null) {
+                    if(mMediaPlayer.isPlaying()){
+                        mMyThread.interrupt();
+                        isPlaying = false;
+                        mMediaPlayer.pause();
+                    }
+                }
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                if (mMediaPlayer != null) {
+                    mMediaPlayer.seekTo(seekBar.getProgress());
+                    mMediaPlayer.start();
+                    mMyThread = new MyThread();
+                    isPlaying = true;
+                }
+
+            }
+        });
         mTextViewTopName = (TextView)mView.findViewById(R.id.textView_top_name);
         mTextViewTime = (TextView) mView.findViewById(R.id.textView_time);
         mTextViewTitle = (TextView) mView.findViewById(R.id.textView_title);
@@ -108,10 +155,15 @@ public class RecordFragment extends BaseFragment implements SwipeRefreshLayout.O
             public void onClick(View v) {
                 if(mMediaPlayer != null) {
                     if (mMediaPlayer.isPlaying()) {
+                        mMyThread.interrupt();
+                        isPlaying = false;
                         mMediaPlayer.pause();
                         mImageButtonPause.setImageResource(R.drawable.btn_play);
                     }else{
                         mMediaPlayer.start();
+                        mMyThread = new MyThread();
+                        mMyThread.start();
+                        isPlaying = true;
                         mImageButtonPause.setImageResource(R.drawable.btn_pause);
                     }
                 }
@@ -121,13 +173,7 @@ public class RecordFragment extends BaseFragment implements SwipeRefreshLayout.O
         (mImageButtonStop = (ImageButton)mView.findViewById(R.id.imagebutton_stop)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mMediaPlayer != null) {
-                    mMediaPlayer.stop();
-                    mMediaPlayer.reset();
-                    mMediaPlayer.release();
-                    mMediaPlayer = null;
-                    setLayoutReset();
-                }
+                setReset();
 
             }
         });
@@ -140,14 +186,9 @@ public class RecordFragment extends BaseFragment implements SwipeRefreshLayout.O
                                     int position, long id) {
                 // TODO Auto-generated method stub
                 try {
+                    setReset();
                     if(!DsObjectUtils.isEmpty(mData.get(position).getTitle())){
                         mTextViewTitle.setText(mData.get(position).getTitle());
-                    }
-                    if(mMediaPlayer != null) {
-                        mMediaPlayer.stop();
-                        mMediaPlayer.reset();
-                        mMediaPlayer.release();
-                        mMediaPlayer = null;
                     }
                     mImageButtonPause.setAlpha(1f);
                     mImageButtonStop.setAlpha(1f);
@@ -156,23 +197,21 @@ public class RecordFragment extends BaseFragment implements SwipeRefreshLayout.O
                     FileInputStream fileInputStream = new FileInputStream(mData.get(position).getUrl_file());
                     FileDescriptor fileDescriptor = fileInputStream.getFD();
                     mMediaPlayer.setDataSource(fileDescriptor);
-
                     mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                         @Override
                         public void onPrepared(MediaPlayer mp) {
+                            mSeekBar.setMax(mp.getDuration());
                             mMediaPlayer.start();
+                            mMyThread = new MyThread();
+                            mMyThread.start();
+                            isPlaying = true;
+
                         }
                     });
                     mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                         @Override
                         public void onCompletion(MediaPlayer mp) {
-                            if (mMediaPlayer != null) {
-                                mMediaPlayer.stop();
-                                mMediaPlayer.reset();
-                                mMediaPlayer.release();
-                                mMediaPlayer = null;
-                                setLayoutReset();
-                            }
+                            setReset();
                         }
                     });
                     mMediaPlayer.prepareAsync();
@@ -232,23 +271,6 @@ public class RecordFragment extends BaseFragment implements SwipeRefreshLayout.O
                 }
             }
         });
-//        mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-//            @Override
-//            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-//                try {
-//                    mRecordDB = new RecordDB(mContext);
-//                    mRecordDB.open();
-//                    mRecordDB.deleteNote(mData.get(position).getContents_id());
-//                    mData.remove(position);
-//                    mRecordAdapter.notifyDataSetChanged();
-//                    mRecordDB.close();
-//                    Toast.makeText(mContext, "내노래 삭제 되었습니다.", Toast.LENGTH_SHORT).show();
-//                } catch (Exception e) {
-//                    Toast.makeText(mContext, "오류가 발생 되었습니다. 계속 문제가 발생시 관리자에게 문의 해주시기 바랍니다.", Toast.LENGTH_SHORT).show();
-//                }
-//                return false;
-//            }
-//        });
     }
 
     public void setList(){
@@ -379,12 +401,7 @@ public class RecordFragment extends BaseFragment implements SwipeRefreshLayout.O
     public void onDestroyView() {
         super.onDestroyView();
         Log.i("TEST", "onDestroyView()");
-        if (mMediaPlayer != null) {
-            mMediaPlayer.stop();
-            mMediaPlayer.reset();
-            mMediaPlayer.release();
-            mMediaPlayer = null;
-        }
+        setReset();
     }
 
     @Override
@@ -392,24 +409,36 @@ public class RecordFragment extends BaseFragment implements SwipeRefreshLayout.O
         super.onPause();
         if (mMediaPlayer != null) {
             if(mMediaPlayer.isPlaying()){
+                isPlaying = false;
+                mMyThread.interrupt();
                 mMediaPlayer.pause();
             }
         }
     }
 
-    @Override
-    public void Tab(int tab) {
-
+    public void setReset(){
+        mSeekBar.setProgress(0);
+        isPlaying = false;
+        mMyThread.interrupt();
         if (mMediaPlayer != null) {
             mMediaPlayer.stop();
             mMediaPlayer.reset();
             mMediaPlayer.release();
             mMediaPlayer = null;
-            setLayoutReset();
         }
+        setLayoutReset();
+    }
 
+    @Override
+    public void Tab(int tab) {
+        setReset();
         if(tab == 6) {
-
+            boolean isRecordRefrash = SharedPreference.getBooleanSharedPreference(mContext, Config.RECORD_REFRASH);
+            if(isRecordRefrash){
+                SharedPreference.putSharedPreference(mContext, Config.RECORD_REFRASH, false);
+                mProgressBar.setVisibility(View.VISIBLE);
+                setList();
+            }
         }
 
     }

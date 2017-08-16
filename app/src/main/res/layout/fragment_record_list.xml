@@ -64,6 +64,17 @@
 
         </FrameLayout>
     </android.support.v4.widget.SwipeRefreshLayout>
+    <SeekBar
+        android:id="@+id/seekBar"
+        android:paddingStart="0dp"
+        android:paddingEnd="0dp"
+        android:layout_width="match_parent"
+        android:layout_height="7dip"
+        android:max="100"
+        android:progress="0"
+        android:thumb="@null"
+        android:progressDrawable="@drawable/progressbarstyleone"
+        />
     <RelativeLayout
         android:paddingTop="10dip"
         android:paddingBottom="10dip"

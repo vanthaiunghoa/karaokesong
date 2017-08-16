@@ -40,6 +40,7 @@ public class Config {
 	public static final String YOUTUBE_AUTO_PLAY = "youtube_auto_play";
 	public static final String YOUTUBE_PLAY_END_RECORD_END = "youtube_play_end_record_end";
 	public static final String YOUTUBE_PLAY_RECORD = "youtube_play_record";
+	public static final String RECORD_REFRASH = "record_refrash";
 
 
 	public final static String PREFERENCE_LOCATION =  "PREFERENCE_LOCATION";//위치동의

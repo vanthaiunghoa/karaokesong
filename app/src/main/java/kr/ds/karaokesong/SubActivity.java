@@ -267,6 +267,7 @@ public class SubActivity extends BaseActivity implements YouTubePlayer.OnInitial
                         mRecordDB.open();
                         mRecordDB.createNote(mSavedata.getDd_uid(), mSavedata.getImage(), mSavedata.getTitle(), mSavedata.getVideo_id(), mUrlFile, fm.format(calendar.getTime()));
                         Toast.makeText(getApplicationContext(), "녹음이 시작 되었습니다.", Toast.LENGTH_SHORT).show();
+                        SharedPreference.putSharedPreference(getApplicationContext(), Config.RECORD_REFRASH, true);
                         mCursor.close();
                         mRecordDB.close();
                         if (recorder == null) {

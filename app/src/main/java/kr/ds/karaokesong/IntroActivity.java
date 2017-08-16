@@ -22,8 +22,8 @@ public class IntroActivity extends BaseActivity{
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_intro);
-        //OnNext();
-        setAdMob();
+        OnNext();
+        //setAdMob();
 
     }
     public void setAdMob(){
