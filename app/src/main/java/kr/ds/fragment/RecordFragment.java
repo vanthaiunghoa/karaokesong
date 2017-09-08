@@ -21,6 +21,7 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
@@ -54,6 +55,8 @@ import kr.ds.karaokesong.SubActivity;
 import kr.ds.utils.DsObjectUtils;
 import kr.ds.utils.SharedPreference;
 
+import static android.os.Build.VERSION_CODES.M;
+import static kr.ds.karaokesong.R.id.seekBar;
 import static kr.ds.utils.SharedPreference.getBooleanSharedPreference;
 
 
@@ -87,7 +90,7 @@ public class RecordFragment extends BaseFragment implements SwipeRefreshLayout.O
     private MediaPlayer mMediaPlayer;
     private RecordDB mRecordDB;
 
-    private TextView mTextViewTitle, mTextViewTime;
+    private TextView mTextViewTitle, mTextViewTime, mTextViewTime2;
     private ImageButton mImageButtonPause;
     private ImageButton mImageButtonStop;
 
@@ -99,8 +102,29 @@ public class RecordFragment extends BaseFragment implements SwipeRefreshLayout.O
     class MyThread extends Thread {
         @Override
         public void run() {
-            while(isPlaying) {
-                mSeekBar.setProgress(mMediaPlayer.getCurrentPosition());
+            while(isPlaying && mMediaPlayer != null) {
+                try{
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if(mMediaPlayer != null) {
+                                if (mMediaPlayer.isPlaying()) {
+                                    setTimer(mMediaPlayer.getCurrentPosition());
+                                }
+                            }
+                        }
+                    });
+                    if(mMediaPlayer != null) {
+                        if (mMediaPlayer.isPlaying()) {
+                            mSeekBar.setProgress(mMediaPlayer.getCurrentPosition());
+                        }
+                    }
+                }catch (Exception e){
+                    if(mMyThread != null && mMyThread.isAlive()) {
+                        mMyThread.interrupt();
+                    }
+                }
+
             }
         }
     }
@@ -118,36 +142,28 @@ public class RecordFragment extends BaseFragment implements SwipeRefreshLayout.O
         mMyThread = new MyThread();
 
         mView = inflater.inflate(R.layout.fragment_record_list, null);
-        mSeekBar = (SeekBar)mView.findViewById(R.id.seekBar);
+        mSeekBar = (SeekBar)mView.findViewById(seekBar);
         mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-                if (mMediaPlayer != null) {
-                    if(mMediaPlayer.isPlaying()){
-                        mMyThread.interrupt();
-                        isPlaying = false;
-                        mMediaPlayer.pause();
+                if (fromUser) {
+                    if (mMediaPlayer != null) {
+                        setTimer(progress);
+                        mMediaPlayer.seekTo(progress);
                     }
                 }
+            }
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
             }
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                if (mMediaPlayer != null) {
-                    mMediaPlayer.seekTo(seekBar.getProgress());
-                    mMediaPlayer.start();
-                    mMyThread = new MyThread();
-                    isPlaying = true;
-                }
-
             }
         });
         mTextViewTopName = (TextView)mView.findViewById(R.id.textView_top_name);
         mTextViewTime = (TextView) mView.findViewById(R.id.textView_time);
+        mTextViewTime2 = (TextView) mView.findViewById(R.id.textView_time2);
         mTextViewTitle = (TextView) mView.findViewById(R.id.textView_title);
         mTextViewTitle.setSelected(true);
         (mImageButtonPause = (ImageButton)mView.findViewById(R.id.imagebutton_pause)).setOnClickListener(new View.OnClickListener() {
@@ -155,7 +171,9 @@ public class RecordFragment extends BaseFragment implements SwipeRefreshLayout.O
             public void onClick(View v) {
                 if(mMediaPlayer != null) {
                     if (mMediaPlayer.isPlaying()) {
-                        mMyThread.interrupt();
+                        if(mMyThread != null && mMyThread.isAlive()) {
+                            mMyThread.interrupt();
+                        }
                         isPlaying = false;
                         mMediaPlayer.pause();
                         mImageButtonPause.setImageResource(R.drawable.btn_play);
@@ -200,6 +218,7 @@ public class RecordFragment extends BaseFragment implements SwipeRefreshLayout.O
                     mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                         @Override
                         public void onPrepared(MediaPlayer mp) {
+                            setTimer2(mp.getDuration());
                             mSeekBar.setMax(mp.getDuration());
                             mMediaPlayer.start();
                             mMyThread = new MyThread();
@@ -230,6 +249,8 @@ public class RecordFragment extends BaseFragment implements SwipeRefreshLayout.O
     }
     public void setLayoutReset(){
         mTextViewTitle.setText("");
+        mTextViewTime.setText("00:00");
+        mTextViewTime2.setText("00:00");
         mImageButtonPause.setAlpha(0.2f);
         mImageButtonStop.setAlpha(0.2f);
     }
@@ -410,17 +431,22 @@ public class RecordFragment extends BaseFragment implements SwipeRefreshLayout.O
         if (mMediaPlayer != null) {
             if(mMediaPlayer.isPlaying()){
                 isPlaying = false;
-                mMyThread.interrupt();
+                if(mMyThread != null && mMyThread.isAlive()) {
+                    mMyThread.interrupt();
+                }
                 mMediaPlayer.pause();
             }
         }
     }
-
     public void setReset(){
-        mSeekBar.setProgress(0);
         isPlaying = false;
-        mMyThread.interrupt();
+        if(mMyThread != null && mMyThread.isAlive()) {
+            mMyThread.interrupt();
+        }
+        mSeekBar.setMax(0);
+        mSeekBar.setProgress(0);
         if (mMediaPlayer != null) {
+            mMediaPlayer.seekTo(0);
             mMediaPlayer.stop();
             mMediaPlayer.reset();
             mMediaPlayer.release();
@@ -428,7 +454,6 @@ public class RecordFragment extends BaseFragment implements SwipeRefreshLayout.O
         }
         setLayoutReset();
     }
-
     @Override
     public void Tab(int tab) {
         setReset();
@@ -440,7 +465,17 @@ public class RecordFragment extends BaseFragment implements SwipeRefreshLayout.O
                 setList();
             }
         }
+    }
+    public void setTimer2(int value){
+        String m = (String.valueOf(value / 60000).length() == 1)?  ("0" + (value / 60000)) : (String.valueOf(value / 60000));
+        String s = (String.valueOf((value%60000)/1000).length() == 1)?  ("0" + ((value%60000)/1000)) : (String.valueOf((value%60000)/1000));
+        mTextViewTime2.setText(m+":"+s);
+    }
 
+    public void setTimer(int value){
+        String m = (String.valueOf(value / 60000).length() == 1)?  ("0" + (value / 60000)) : (String.valueOf(value / 60000));
+        String s = (String.valueOf((value%60000)/1000).length() == 1)?  ("0" + ((value%60000)/1000)) : (String.valueOf((value%60000)/1000));
+        mTextViewTime.setText(m+":"+s);
     }
 
 }

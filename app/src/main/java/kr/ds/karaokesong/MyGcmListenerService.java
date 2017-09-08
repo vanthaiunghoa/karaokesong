@@ -32,7 +32,9 @@ import com.google.android.gms.gcm.GcmListenerService;
 import kr.ds.config.Config;
 import kr.ds.utils.DsObjectUtils;
 import kr.ds.utils.Helper;
+import kr.ds.utils.SharedPreference;
 import kr.ds.utils.UniqueID;
+import me.leolin.shortcutbadger.ShortcutBadger;
 
 
 public class MyGcmListenerService extends GcmListenerService {
@@ -47,6 +49,13 @@ public class MyGcmListenerService extends GcmListenerService {
     // [START receive_message]
     @Override
     public void onMessageReceived(String from, Bundle data) {
+
+
+        int badgerCount = SharedPreference.getIntSharedPreference(getApplicationContext(), "badger_count");
+        badgerCount++;
+        SharedPreference.putSharedPreference(getApplicationContext(),"badger_count",badgerCount);
+        ShortcutBadger.applyCount(getApplicationContext(), badgerCount);
+
         String message = data.getString("msg");
         String image_url = data.getString("image_url");
         String push_type = data.getString("push_type");

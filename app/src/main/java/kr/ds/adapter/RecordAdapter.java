@@ -3,6 +3,8 @@ package kr.ds.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Environment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +24,7 @@ import java.util.ArrayList;
 import kr.ds.data.BaseResultListener;
 import kr.ds.db.RecordDB;
 import kr.ds.handler.RecordHandler;
+import kr.ds.karaokesong.EffectActivity;
 import kr.ds.karaokesong.R;
 import kr.ds.utils.DsObjectUtils;
 
@@ -72,6 +75,7 @@ public class RecordAdapter extends BaseAdapter {
             holder.textView2 = (TextView) convertView.findViewById(R.id.textView2);
             holder.imageViewShare =  (ImageView) convertView.findViewById(R.id.imageView_share);
             holder.imageViewDelete =  (ImageView) convertView.findViewById(R.id.imageView_delete);
+            holder.imageViewEffect =  (ImageView) convertView.findViewById(R.id.imageView_effect);
 
             convertView.setTag(holder);
         } else {
@@ -118,16 +122,27 @@ public class RecordAdapter extends BaseAdapter {
             }
         });
 
+        holder.imageViewEffect.setTag(position);
+        holder.imageViewEffect.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int position = (int) v.getTag();
+                Intent intent = new Intent(mContext, EffectActivity.class);
+                intent.putExtra("data", mData.get(position));
+                mContext.startActivity(intent);
+            }
+        });
+
         holder.imageViewDelete.setTag(position);
         holder.imageViewDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 int position = (int) v.getTag();
-
                 try {
                     mRecordDB = new RecordDB(mContext);
                     mRecordDB.open();
                     mRecordDB.deleteNote(mData.get(position).getContents_id());
+                    new File(mData.get(position).getUrl_file()).delete();
                     mData.remove(position);
                     notifyDataSetChanged();
                     mRecordDB.close();
@@ -135,22 +150,14 @@ public class RecordAdapter extends BaseAdapter {
                 } catch (Exception e) {
                     Toast.makeText(mContext, "오류가 발생 되었습니다. 계속 문제가 발생시 관리자에게 문의 해주시기 바랍니다.", Toast.LENGTH_SHORT).show();
                 }
-
-
             }
         });
-
-
-
-
-
-
         return convertView;
     }
 
 
     class ViewHolder {
-        ImageView imageView, imageViewShare, imageViewDelete;
+        ImageView imageView, imageViewShare, imageViewDelete, imageViewEffect;
         TextView textView1, textView2;
     }
 

@@ -9,6 +9,9 @@ import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
 
+import kr.ds.utils.SharedPreference;
+import me.leolin.shortcutbadger.ShortcutBadger;
+
 /**
  * Created by Administrator on 2016-11-08.
  */
@@ -22,6 +25,9 @@ public class IntroActivity extends BaseActivity{
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_intro);
+        ShortcutBadger.removeCount(getApplicationContext());
+        SharedPreference.putSharedPreference(getApplicationContext(), "badger_count", 0);
+
         OnNext();
         //setAdMob();
 
