@@ -351,7 +351,7 @@ public class SubActivity extends BaseActivity implements YouTubePlayer.OnInitial
                 // TODO Auto-generated method stub
                 Intent intent = new Intent(getApplicationContext(), SubActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                intent.putExtra("data", mData.get(position));
+                intent.putExtra("data", mData.get(position-1));
                 startActivity(intent);
             }
         });

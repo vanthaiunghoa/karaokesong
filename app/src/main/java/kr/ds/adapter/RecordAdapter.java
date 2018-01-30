@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import kr.ds.data.BaseResultListener;
 import kr.ds.db.RecordDB;
 import kr.ds.handler.RecordHandler;
-import kr.ds.karaokesong.EffectActivity;
 import kr.ds.karaokesong.R;
 import kr.ds.utils.DsObjectUtils;
 
@@ -75,7 +74,6 @@ public class RecordAdapter extends BaseAdapter {
             holder.textView2 = (TextView) convertView.findViewById(R.id.textView2);
             holder.imageViewShare =  (ImageView) convertView.findViewById(R.id.imageView_share);
             holder.imageViewDelete =  (ImageView) convertView.findViewById(R.id.imageView_delete);
-            holder.imageViewEffect =  (ImageView) convertView.findViewById(R.id.imageView_effect);
 
             convertView.setTag(holder);
         } else {
@@ -122,17 +120,6 @@ public class RecordAdapter extends BaseAdapter {
             }
         });
 
-        holder.imageViewEffect.setTag(position);
-        holder.imageViewEffect.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int position = (int) v.getTag();
-                Intent intent = new Intent(mContext, EffectActivity.class);
-                intent.putExtra("data", mData.get(position));
-                mContext.startActivity(intent);
-            }
-        });
-
         holder.imageViewDelete.setTag(position);
         holder.imageViewDelete.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -157,7 +144,7 @@ public class RecordAdapter extends BaseAdapter {
 
 
     class ViewHolder {
-        ImageView imageView, imageViewShare, imageViewDelete, imageViewEffect;
+        ImageView imageView, imageViewShare, imageViewDelete;
         TextView textView1, textView2;
     }
 

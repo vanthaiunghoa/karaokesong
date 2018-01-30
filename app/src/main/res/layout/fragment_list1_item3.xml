@@ -96,28 +96,7 @@
                     android:orientation="horizontal"
                     android:gravity="right">
 
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:gravity="center"
-                        >
 
-                        <ImageView
-                            android:clickable="true"
-                            android:id="@+id/imageView_effect"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:background="@drawable/list_effect"/>
-
-                        <TextView
-                            android:textColor="#383f47"
-                            android:textSize="12sp"
-                            android:text="효과"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"/>
-
-                    </LinearLayout>
 
                     <LinearLayout
                         android:layout_marginLeft="20dip"
