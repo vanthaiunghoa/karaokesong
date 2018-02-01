@@ -136,7 +136,7 @@
                 android:textColor="#2e2830"
                 android:textSize="13sp"
                 android:paddingLeft="10dip"
-                android:paddingTop="2dip"
+                android:paddingTop="5dip"
                 android:paddingBottom="5dip"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

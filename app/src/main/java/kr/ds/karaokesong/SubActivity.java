@@ -177,9 +177,9 @@ public class SubActivity extends BaseActivity implements YouTubePlayer.OnInitial
     private TextView mTextViewTime;
     private int time = 0;
 
-    private LinearLayout mLinearLayoutNative;
-    private AdFaceBookNativeView mAdFaceBookNativeView;
-    private AdAdmobNativeView mAdAdmobNativeView;
+    //private LinearLayout mLinearLayoutNative;
+    //private AdFaceBookNativeView mAdFaceBookNativeView;
+    //private AdAdmobNativeView mAdAdmobNativeView;
 
 
 
@@ -195,32 +195,32 @@ public class SubActivity extends BaseActivity implements YouTubePlayer.OnInitial
         }
 
         setContentView(R.layout.activty_sub);
-        mLinearLayoutNative = (LinearLayout) getLayoutInflater().inflate(R.layout.native_container, null);
-        mAdFaceBookNativeView = new AdFaceBookNativeView(getApplicationContext());
-        mAdFaceBookNativeView.setContainer(mLinearLayoutNative).setLayout(R.layout.native_facebook2).setCallBack(new AdFaceBookNativeView.ResultListener() {
-            @Override
-            public <T> void OnLoad() {
-
-            }
-            @Override
-            public <T> void OnFail() {
-                if(mLinearLayoutNative.getChildCount() > 0) {
-                    mLinearLayoutNative.removeAllViews();
-                }
-                mAdAdmobNativeView = new AdAdmobNativeView(getApplicationContext());
-                mAdAdmobNativeView.setContainer(mLinearLayoutNative).setLayout().setCallBack(new AdAdmobNativeView.ResultListener() {
-                    @Override
-                    public <T> void OnLoad() {
-
-                    }
-
-                    @Override
-                    public <T> void OnFail() {
-                        mLinearLayoutNative.setVisibility(View.GONE);
-                    }
-                });
-            }
-        });
+//        mLinearLayoutNative = (LinearLayout) getLayoutInflater().inflate(R.layout.native_container, null);
+//        mAdFaceBookNativeView = new AdFaceBookNativeView(getApplicationContext());
+//        mAdFaceBookNativeView.setContainer(mLinearLayoutNative).setLayout(R.layout.native_facebook2).setCallBack(new AdFaceBookNativeView.ResultListener() {
+//            @Override
+//            public <T> void OnLoad() {
+//
+//            }
+//            @Override
+//            public <T> void OnFail() {
+//                if(mLinearLayoutNative.getChildCount() > 0) {
+//                    mLinearLayoutNative.removeAllViews();
+//                }
+//                mAdAdmobNativeView = new AdAdmobNativeView(getApplicationContext());
+//                mAdAdmobNativeView.setContainer(mLinearLayoutNative).setLayout().setCallBack(new AdAdmobNativeView.ResultListener() {
+//                    @Override
+//                    public <T> void OnLoad() {
+//
+//                    }
+//
+//                    @Override
+//                    public <T> void OnFail() {
+//                        mLinearLayoutNative.setVisibility(View.GONE);
+//                    }
+//                });
+//            }
+//        });
         setLog();
         mTopName = (TextView) findViewById(R.id.textView_top_name);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -343,7 +343,7 @@ public class SubActivity extends BaseActivity implements YouTubePlayer.OnInitial
             }
         });
         mListView = (ScrollListView) findViewById(R.id.listView);
-        mListView.addHeaderView(mLinearLayoutNative);
+        //mListView.addHeaderView(mLinearLayoutNative);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
@@ -351,7 +351,7 @@ public class SubActivity extends BaseActivity implements YouTubePlayer.OnInitial
                 // TODO Auto-generated method stub
                 Intent intent = new Intent(getApplicationContext(), SubActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                intent.putExtra("data", mData.get(position-1));
+                intent.putExtra("data", mData.get(position));
                 startActivity(intent);
             }
         });
