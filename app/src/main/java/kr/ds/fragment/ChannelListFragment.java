@@ -35,6 +35,7 @@ import kr.ds.handler.ListHandler;
 import kr.ds.karaokesong.R;
 import kr.ds.karaokesong.SubActivity;
 import kr.ds.utils.DsObjectUtils;
+import kr.ds.widget.AdAdmobNativeAdvancedView;
 import kr.ds.widget.AdAdmobNativeView;
 import kr.ds.widget.AdFaceBookNativeView;
 
@@ -74,7 +75,7 @@ public class ChannelListFragment extends BaseFragment implements SwipeRefreshLay
 
     private LinearLayout mLinearLayoutNative;
     private AdFaceBookNativeView mAdFaceBookNativeView;
-    private AdAdmobNativeView mAdAdmobNativeView;
+    private AdAdmobNativeAdvancedView mAdAdmobNativeAdvancedView;
 
 
     @Override
@@ -101,13 +102,11 @@ public class ChannelListFragment extends BaseFragment implements SwipeRefreshLay
                 if(mLinearLayoutNative.getChildCount() > 0) {
                     mLinearLayoutNative.removeAllViews();
                 }
-                mAdAdmobNativeView = new AdAdmobNativeView(mContext);
-                mAdAdmobNativeView.setContainer(mLinearLayoutNative).setLayout().setCallBack(new AdAdmobNativeView.ResultListener() {
+                mAdAdmobNativeAdvancedView = new AdAdmobNativeAdvancedView(mContext);
+                mAdAdmobNativeAdvancedView.setContainer(mLinearLayoutNative).setLayout(AdAdmobNativeAdvancedView.CONTET).setCallBack(new AdAdmobNativeAdvancedView.ResultListener() {
                     @Override
                     public <T> void OnLoad() {
-
                     }
-
                     @Override
                     public <T> void OnFail() {
                         mLinearLayoutNative.setVisibility(View.GONE);

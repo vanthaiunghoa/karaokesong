@@ -24,6 +24,7 @@ import kr.ds.data.ListData;
 import kr.ds.handler.ChannelHandler;
 import kr.ds.handler.ListHandler;
 import kr.ds.karaokesong.R;
+import kr.ds.widget.AdAdmobNativeAdvancedView;
 import kr.ds.widget.AdAdmobNativeView;
 import kr.ds.widget.AdFaceBookNativeView;
 
@@ -50,7 +51,7 @@ public class MainFragment extends BaseFragment {
     private LinearLayout mLinearLayoutNative;
     private LinearLayout mLinearLayoutNative2;
     private AdFaceBookNativeView mAdFaceBookNativeView;
-    private AdAdmobNativeView mAdAdmobNativeView;
+    private AdAdmobNativeAdvancedView mAdAdmobNativeAdvancedView;
 
     @Override
     public void onAttach(Activity activity) {
@@ -78,13 +79,11 @@ public class MainFragment extends BaseFragment {
                 if(mLinearLayoutNative.getChildCount() > 0) {
                     mLinearLayoutNative.removeAllViews();
                 }
-                mAdAdmobNativeView = new AdAdmobNativeView(mContext);
-                mAdAdmobNativeView.setContainer(mLinearLayoutNative).setLayout().setCallBack(new AdAdmobNativeView.ResultListener() {
+                mAdAdmobNativeAdvancedView = new AdAdmobNativeAdvancedView(mContext);
+                mAdAdmobNativeAdvancedView.setContainer(mLinearLayoutNative).setLayout(AdAdmobNativeAdvancedView.TOP).setCallBack(new AdAdmobNativeAdvancedView.ResultListener() {
                     @Override
                     public <T> void OnLoad() {
-
                     }
-
                     @Override
                     public <T> void OnFail() {
                         mLinearLayoutNative.setVisibility(View.GONE);
@@ -104,18 +103,20 @@ public class MainFragment extends BaseFragment {
                 if(mLinearLayoutNative2.getChildCount() > 0) {
                     mLinearLayoutNative2.removeAllViews();
                 }
-                mAdAdmobNativeView = new AdAdmobNativeView(mContext);
-                mAdAdmobNativeView.setContainer(mLinearLayoutNative2).setLayout().setCallBack(new AdAdmobNativeView.ResultListener() {
+
+                mAdAdmobNativeAdvancedView = new AdAdmobNativeAdvancedView(mContext);
+                mAdAdmobNativeAdvancedView.setContainer(mLinearLayoutNative2).setLayout(AdAdmobNativeAdvancedView.TOP).setCallBack(new AdAdmobNativeAdvancedView.ResultListener() {
                     @Override
                     public <T> void OnLoad() {
-
                     }
-
                     @Override
                     public <T> void OnFail() {
                         mLinearLayoutNative2.setVisibility(View.GONE);
                     }
                 });
+
+
+
             }
         });
 
@@ -230,6 +231,8 @@ public class MainFragment extends BaseFragment {
 
                     mFrameLayoutBg.setVisibility(View.GONE);
                     mNestedScrollView.setVisibility(View.VISIBLE);
+                    mNestedScrollView.smoothScrollTo(0,0);
+
                 }
             }
             @Override
