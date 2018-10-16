@@ -83,7 +83,7 @@ public class SharedPreference
         SharedPreferences prefs =
                 PreferenceManager.getDefaultSharedPreferences(context);
 
-        return prefs.getString(key, null);
+        return prefs.getString(key, "");
     }
 
     /**

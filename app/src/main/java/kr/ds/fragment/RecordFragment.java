@@ -28,10 +28,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.ads.AdListener;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.NativeExpressAdView;
-import com.google.android.gms.vision.text.Text;
+
 import com.nhaarman.listviewanimations.appearance.simple.AlphaInAnimationAdapter;
 
 import java.io.File;

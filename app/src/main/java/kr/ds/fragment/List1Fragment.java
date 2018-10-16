@@ -20,7 +20,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.maps.LocationSource;
 import com.nhaarman.listviewanimations.appearance.simple.AlphaInAnimationAdapter;
 
 import java.util.ArrayList;

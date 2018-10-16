@@ -1,5 +1,6 @@
 package kr.ds.karaokesong;
 
+import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -13,17 +14,21 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
-import com.facebook.ads.AbstractAdListener;
-import com.facebook.ads.Ad;
-import com.facebook.ads.AdError;
+
 import com.google.android.gms.ads.formats.NativeAd;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.gun0912.tedpermission.PermissionListener;
+import com.gun0912.tedpermission.TedPermission;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import kr.ds.config.Config;
+import kr.ds.dev.DevBannerView;
 import kr.ds.fragment.BaseFragment;
 import kr.ds.fragment.BookMarkFragment;
 import kr.ds.fragment.ChannelFragment;
@@ -35,6 +40,7 @@ import kr.ds.fragment.SettingFragment;
 import kr.ds.store.MainStoreTypeDialog;
 import kr.ds.utils.DsObjectUtils;
 import kr.ds.utils.SharedPreference;
+import kr.ds.widget.InstallDialog;
 
 public class MainActivity extends MainBaseActivity implements View.OnClickListener{
 
@@ -66,13 +72,22 @@ public class MainActivity extends MainBaseActivity implements View.OnClickListen
     private final int TAB5 = 5;
     private final int TAB6 = 6;
 
-    private com.facebook.ads.InterstitialAd interstitialAdFackBook;
-
+    private DevBannerView mDevBannerView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(null);
+        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        if(Config.isInstall) {
+            InstallDialog mInstallDialog = new InstallDialog(Config.INSTALL_MESSAGE, Config.INSTALL_URL);// call the static method
+            mInstallDialog.show(getSupportFragmentManager(), "dialog");
+        }
+        mDevBannerView = (DevBannerView)findViewById(R.id.devBannerView);
+
+        if(Config.isDev){
+            mDevBannerView.setVisibility(View.VISIBLE);
+        }
 
 
         (mLinearLayoutTab1 = (LinearLayout)findViewById(R.id.linearLayout_tab1)).setOnClickListener(this);
@@ -89,64 +104,27 @@ public class MainActivity extends MainBaseActivity implements View.OnClickListen
         mImageViewTab5 = (ImageView) findViewById(R.id.imageView_tab5);
         mImageViewTab6 = (ImageView) findViewById(R.id.imageView_tab6);
 
-        setTab(TAB1);
 
-        if (checkPlayServices() && DsObjectUtils.getInstance(getApplicationContext()).isEmpty(SharedPreference.getSharedPreference(getApplicationContext(), Config.TOKEN))) { //토큰이 없는경우..
-            Intent intent = new Intent(getApplicationContext(), RegistrationIntentService.class);
-            startService(intent);
+        TedPermission.with(this)
+                .setPermissionListener(permissionlistener1)
+                .setRationaleMessage(getString(R.string.permission_text))
+                .setDeniedMessage(getString(R.string.permission_denie))
+                .setPermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.RECORD_AUDIO)
+                .check();
+
+    }
+
+    PermissionListener permissionlistener1 = new PermissionListener() {
+        @Override
+        public void onPermissionGranted() {
+            setTab(TAB1);
         }
 
-//        if(isFaceBookCheck()){
-//            setFaceBook();
-//        }
-    }
-
-    private void setFaceBook() {
-
-        interstitialAdFackBook = new com.facebook.ads.InterstitialAd(getApplicationContext(), "1728884537412489_1728884787412464");
-        interstitialAdFackBook.setAdListener(new AbstractAdListener() {
-            @Override
-            public void onError(Ad ad, AdError adError) {
-                super.onError(ad, adError);
-                Log.i("TEST","error");
-                Log.i("TEST",adError.toString());
-
-            }
-            @Override
-            public void onAdLoaded(Ad ad) {
-                super.onAdLoaded(ad);
-                int random = new Random().nextInt(3);
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        interstitialAdFackBook.show();
-                    }
-                }, random*1000);
-            }
-
-            @Override
-            public void onAdClicked(Ad ad) {
-                super.onAdClicked(ad);
-            }
-
-            @Override
-            public void onInterstitialDisplayed(Ad ad) {
-                super.onInterstitialDisplayed(ad);
-            }
-
-            @Override
-            public void onInterstitialDismissed(Ad ad) {
-                super.onInterstitialDismissed(ad);
-            }
-
-            @Override
-            public void onLoggingImpression(Ad ad) {
-                super.onLoggingImpression(ad);
-            }
-        });
-        interstitialAdFackBook.loadAd();
-    }
-
+        @Override
+        public void onPermissionDenied(List<String> deniedPermissions) {
+            finish();
+        }
+    };
 
 
     private boolean checkPlayServices() {

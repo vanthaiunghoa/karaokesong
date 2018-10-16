@@ -2,7 +2,9 @@ package kr.ds.fragment;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -19,6 +21,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import kr.ds.config.Config;
+import kr.ds.dev.DevView;
 import kr.ds.karaokesong.R;
 import kr.ds.handler.VersionCheckHandler;
 import kr.ds.utils.DsObjectUtils;
@@ -47,6 +50,9 @@ import kr.ds.utils.gcmHandler;
 	private boolean isArea = false;
 	private ScrollView mScrollView;
 
+			private DevView mDevView;
+			private LinearLayout mLinearLayoutAgree;
+
 
 	@Override
 	public void onAttach(Activity activity) {
@@ -64,6 +70,10 @@ import kr.ds.utils.gcmHandler;
 			Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		mView = inflater.inflate(R.layout.setting, container, false);
+		mDevView = (DevView) mView.findViewById(R.id.devView);
+		if (Config.isDev) {
+			mDevView.setVisibility(View.VISIBLE);
+		}
 		mScrollView = (ScrollView)mView.findViewById(R.id.scrollView);
 		mLinearLayoutPush = (LinearLayout)mView.findViewById(R.id.linearLayout_push);
 		(mCheckBoxPush = (CheckBox)mView.findViewById(R.id.checkBox_push)).setOnClickListener(this);
@@ -71,6 +81,8 @@ import kr.ds.utils.gcmHandler;
 		(mCheckBoxPushAuto = (CheckBox)mView.findViewById(R.id.checkBox_youtube_auto_play)).setOnClickListener(this);
 		(mCheckBoxPushEnd = (CheckBox)mView.findViewById(R.id.checkBox_youtube_play_end_record_end)).setOnClickListener(this);
 		mTextViewVersion = (TextView)mView.findViewById(R.id.textView_version);
+		(mLinearLayoutAgree = (LinearLayout)mView.findViewById(R.id.linearLayout_agree)).setOnClickListener(this);
+
 		return mView;
 	}
 	@Override
@@ -186,6 +198,9 @@ import kr.ds.utils.gcmHandler;
 					setBackgroundChecked(mCheckBoxPushEnd, true);
 					SharedPreference.putSharedPreference(mContext, Config.YOUTUBE_PLAY_END_RECORD_END, true);
 				}
+				break;
+			case R.id.linearLayout_agree:
+				startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(Config.URL + Config.URL_XML+ Config.URL_AGREE)));
 				break;
 			}
 	}

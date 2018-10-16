@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
@@ -32,6 +33,7 @@ import kr.ds.handler.ChannelHandler;
 import kr.ds.karaokesong.ChannelListActivity;
 import kr.ds.karaokesong.R;
 import kr.ds.karaokesong.SubActivity;
+import kr.ds.widget.AdAdmobNativeAdvancedView;
 
 
 /**
@@ -65,6 +67,10 @@ public class ChannelFragment extends BaseFragment implements SwipeRefreshLayout.
 
     private String mList_type = "1";
 
+    private LinearLayout mLinearLayoutNative;
+    private AdAdmobNativeAdvancedView mAdAdmobNativeAdvancedView;
+    private boolean isNative = false;
+
 
     @Override
     public void onAttach(Activity activity) {
@@ -78,6 +84,27 @@ public class ChannelFragment extends BaseFragment implements SwipeRefreshLayout.
 
 
         mView = inflater.inflate(R.layout.fragment_channel, null);
+        mListView = (ListView)mView.findViewById(R.id.listView);
+        mLinearLayoutNative = (LinearLayout) inflater.inflate(R.layout.native_container, null);
+        if(Config.isAd) {
+            mAdAdmobNativeAdvancedView = new AdAdmobNativeAdvancedView(mContext);
+            mAdAdmobNativeAdvancedView.setContainer(mLinearLayoutNative).setLayout(AdAdmobNativeAdvancedView.CONTET).setCallBack(new AdAdmobNativeAdvancedView.ResultListener() {
+                @Override
+                public <T> void OnLoad() {
+                    mListView.addHeaderView(mLinearLayoutNative);
+                    isNative = true;
+                }
+
+                @Override
+                public <T> void OnFail() {
+                    mListView.removeHeaderView(mLinearLayoutNative);
+                    isNative = false;
+                }
+            });
+        }else{
+            mListView.removeHeaderView(mLinearLayoutNative);
+            isNative = false;
+        }
 
         mFabSpeedDial = (FabSpeedDial) mView.findViewById(R.id.fab_speed_dial);
         mFabSpeedDial.setMenuListener(new SimpleMenuListenerAdapter() {
@@ -102,14 +129,20 @@ public class ChannelFragment extends BaseFragment implements SwipeRefreshLayout.
             }
         });
 
-        mListView = (ListView)mView.findViewById(R.id.listView);
+
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
                 // TODO Auto-generated method stub
+                int header_position;
+                if(isNative){
+                    header_position = position-1;
+                }else{
+                    header_position = position;
+                }
                 Intent intent = new Intent(mContext, ChannelListActivity.class);
-                intent.putExtra("data", mData.get(position));
+                intent.putExtra("data", mData.get(header_position));
                 startActivity(intent);
 
             }

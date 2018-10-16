@@ -87,7 +87,6 @@
 
                             <ImageView
                                 android:layout_gravity="center_vertical"
-                                android:background="@mipmap/ic_launcher"
                                 android:id="@+id/appinstall_app_icon"
                                 android:layout_width="25dp"
                                 android:layout_height="25dp"/>

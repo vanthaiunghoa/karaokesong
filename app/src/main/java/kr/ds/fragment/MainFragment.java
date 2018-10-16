@@ -25,8 +25,6 @@ import kr.ds.handler.ChannelHandler;
 import kr.ds.handler.ListHandler;
 import kr.ds.karaokesong.R;
 import kr.ds.widget.AdAdmobNativeAdvancedView;
-import kr.ds.widget.AdAdmobNativeView;
-import kr.ds.widget.AdFaceBookNativeView;
 
 /**
  * Created by Administrator on 2017-07-21.
@@ -50,7 +48,6 @@ public class MainFragment extends BaseFragment {
 
     private LinearLayout mLinearLayoutNative;
     private LinearLayout mLinearLayoutNative2;
-    private AdFaceBookNativeView mAdFaceBookNativeView;
     private AdAdmobNativeAdvancedView mAdAdmobNativeAdvancedView;
 
     @Override
@@ -68,60 +65,33 @@ public class MainFragment extends BaseFragment {
         mLinearLayoutNative2 = (LinearLayout) mView.findViewById(R.id.linearLayout_native2);
 
 
-        mAdFaceBookNativeView = new AdFaceBookNativeView(mContext);
-        mAdFaceBookNativeView.setContainer(mLinearLayoutNative).setLayout(R.layout.native_facebook).setCallBack(new AdFaceBookNativeView.ResultListener() {
-            @Override
-            public <T> void OnLoad() {
-
-            }
-            @Override
-            public <T> void OnFail() {
-                if(mLinearLayoutNative.getChildCount() > 0) {
-                    mLinearLayoutNative.removeAllViews();
-                }
-                mAdAdmobNativeAdvancedView = new AdAdmobNativeAdvancedView(mContext);
-                mAdAdmobNativeAdvancedView.setContainer(mLinearLayoutNative).setLayout(AdAdmobNativeAdvancedView.TOP).setCallBack(new AdAdmobNativeAdvancedView.ResultListener() {
-                    @Override
-                    public <T> void OnLoad() {
-                    }
-                    @Override
-                    public <T> void OnFail() {
-                        mLinearLayoutNative.setVisibility(View.GONE);
-                    }
-                });
-            }
-        });
-
-        mAdFaceBookNativeView = new AdFaceBookNativeView(mContext);
-        mAdFaceBookNativeView.setContainer(mLinearLayoutNative2).setLayout(R.layout.native_facebook).setCallBack(new AdFaceBookNativeView.ResultListener() {
-            @Override
-            public <T> void OnLoad() {
-
-            }
-            @Override
-            public <T> void OnFail() {
-                if(mLinearLayoutNative2.getChildCount() > 0) {
-                    mLinearLayoutNative2.removeAllViews();
+        if(Config.isAd) {
+            mAdAdmobNativeAdvancedView = new AdAdmobNativeAdvancedView(mContext);
+            mAdAdmobNativeAdvancedView.setContainer(mLinearLayoutNative).setLayout(AdAdmobNativeAdvancedView.TOP).setCallBack(new AdAdmobNativeAdvancedView.ResultListener() {
+                @Override
+                public <T> void OnLoad() {
                 }
 
-                mAdAdmobNativeAdvancedView = new AdAdmobNativeAdvancedView(mContext);
-                mAdAdmobNativeAdvancedView.setContainer(mLinearLayoutNative2).setLayout(AdAdmobNativeAdvancedView.TOP).setCallBack(new AdAdmobNativeAdvancedView.ResultListener() {
-                    @Override
-                    public <T> void OnLoad() {
-                    }
-                    @Override
-                    public <T> void OnFail() {
-                        mLinearLayoutNative2.setVisibility(View.GONE);
-                    }
-                });
+                @Override
+                public <T> void OnFail() {
+                    mLinearLayoutNative.setVisibility(View.GONE);
+                }
+            });
 
-
-
-            }
-        });
-
-
-
+            mAdAdmobNativeAdvancedView = new AdAdmobNativeAdvancedView(mContext);
+            mAdAdmobNativeAdvancedView.setContainer(mLinearLayoutNative2).setLayout(AdAdmobNativeAdvancedView.TOP).setCallBack(new AdAdmobNativeAdvancedView.ResultListener() {
+                @Override
+                public <T> void OnLoad() {
+                }
+                @Override
+                public <T> void OnFail() {
+                    mLinearLayoutNative2.setVisibility(View.GONE);
+                }
+            });
+        }else{
+            mLinearLayoutNative.setVisibility(View.GONE);
+            mLinearLayoutNative2.setVisibility(View.GONE);
+        }
 
         mFrameLayoutBg = (FrameLayout) mView.findViewById(R.id.frameLayout_bg);
         mNestedScrollView = (NestedScrollView) mView.findViewById(R.id.scrollView);

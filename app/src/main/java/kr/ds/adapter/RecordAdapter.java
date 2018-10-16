@@ -3,7 +3,9 @@ package kr.ds.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
+import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -112,8 +114,13 @@ public class RecordAdapter extends BaseAdapter {
                 int position = (int) v.getTag();
                 Intent intent = new Intent();
                 intent.setAction(Intent.ACTION_SEND);
-
-                intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(audioFile));
+                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
+                    intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                    intent.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(mContext,"kr.ds.karaokesong.fileprovider",audioFile));
+                }else{
+                    intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(audioFile));
+                }
                 intent.setType("audio/*");
                 mContext.startActivity(Intent.createChooser(intent, "녹음 파일 공유하기"));
 

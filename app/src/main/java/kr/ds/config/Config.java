@@ -55,4 +55,17 @@ public class Config {
 	public static String APP_DOWN_TITLE = "무료 노래방";
 
 	public static final String GCM_INTENT_FILLTER = "kr.ds.GCM_INTENT_FILLTER";
+
+
+	public static boolean isAd = true;
+	public static boolean isDev = true;
+
+	public static String ADMOB_AD = ""; //전면
+	public static String ADMOB_NATIVE = ""; //네이티브
+	public static String URL_APP = "app.php";
+
+	public static String URL_AGREE = "/agree/agree.php";
+	public static boolean isInstall = false;
+	public static String INSTALL_MESSAGE = "";
+	public static String INSTALL_URL = "";
 }

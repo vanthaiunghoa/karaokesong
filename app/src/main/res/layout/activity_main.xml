@@ -18,6 +18,8 @@
             android:orientation="vertical"></FrameLayout>
 
         <kr.ds.dev.DevBannerView
+            android:visibility="gone"
+            android:id="@+id/devBannerView"
             android:background="#ffffff"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">

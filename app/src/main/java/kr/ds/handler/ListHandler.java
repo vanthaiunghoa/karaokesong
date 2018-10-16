@@ -3,7 +3,6 @@ package kr.ds.handler;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.google.android.gms.maps.model.Marker;
 
 /**
  * Created by Administrator on 2016-08-05.
